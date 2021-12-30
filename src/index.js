@@ -1,17 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { App } from './components/App/App';
+
+localStorage.authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiaWQiOiI2MWM2MWYwZWU5NDcyOTMzYTY3ODVlZmEiLCJsb2dpbiI6Imxlc2hhIiwiYWNsIjpbIjYxYzYxZjBlZTk0NzI5MzNhNjc4NWVmYSIsInVzZXIiXX0sImlhdCI6MTY0MDM3NDY3Mn0.51jdHqISRb19LqMYoEmlnLKWXi76r8b9nYwl2j4YLfg';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <App />,
+  document.getElementById('root'),
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
