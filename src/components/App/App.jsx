@@ -10,7 +10,8 @@ import { LoginPage } from '../../pages/LoginPage/LoginPage';
 import { PlaylistsPage } from '../../pages/PlaylistsPage/PlaylistsPage';
 import store from '../../store/store';
 import { theme } from '../../assets/theme';
-import { PaginationControlled } from '../PaginationControlled/PaginationControlled';
+import { RegisterPage } from '../../pages/RegisterPage/RegisterPage';
+import { PrivateRoute } from '../PrivateRoute/PrivateRoute';
 
 export const App = () => (
   <ThemeProvider theme={theme}>
@@ -18,9 +19,10 @@ export const App = () => (
       <BrowserRouter>
         <Header/>
         <Switch>
-          <Route exact path="/" component={MainPage}/>
-          <Route exact path="/playlists" component={PlaylistsPage}/>
+          <PrivateRoute exact path="/" component={MainPage}/>
+          <PrivateRoute exact path="/playlists" component={PlaylistsPage}/>
           <Route exact path="/login" component={LoginPage}/>
+          <Route exact path="/register" component={RegisterPage}/>
         </Switch>
         <Player/>
       </BrowserRouter>

@@ -25,7 +25,6 @@ export const PaginationControlled = (tracks) => {
   }, []);
 
   const handleChange = (e) => {
-    console.log(page, e);
     setPage(page + 1);
   };
 

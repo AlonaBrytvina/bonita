@@ -1,10 +1,39 @@
-import { combineReducers, createStore } from 'redux';
+import {
+  combineReducers, createStore, compose, applyMiddleware,
+} from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import { all } from 'redux-saga/effects';
 import { playerReducer } from './reducers/playerReducer';
+import { tracksSaga } from './sagas/tracksSaga';
+import { tracksReducer } from './reducers/tracksReducer';
+import { playerSaga } from './sagas/playerSaga';
+import { authReducer } from './reducers/authReducer';
+import { authSaga } from './sagas/authSaga';
+
+const sagaMiddleware = createSagaMiddleware();
 
 const rootReducer = combineReducers({
   player: playerReducer,
+  tracks: tracksReducer,
+  auth: authReducer,
 });
 
-const store = createStore(rootReducer);
+function* rootSaga() {
+  yield all([
+    tracksSaga(),
+    playerSaga(),
+    authSaga(),
+  ]);
+}
+
+const store = createStore(
+  rootReducer,
+  compose(
+    applyMiddleware(sagaMiddleware),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+  ),
+);
+
+sagaMiddleware.run(rootSaga);
 
 export default store;

@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import {
   IconButton, List, ListItem, Typography,
-  Slider, Stack, Box, Pagination, PaginationItem,
+  Stack, Box, Pagination, CircularProgress,
 } from '@mui/material';
 import {
-  PauseRounded, PlayArrowRounded, PlayCircle, VolumeDown, VolumeUp,
+  PauseRounded, PlayArrowRounded,
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  actionPause, actionPlay, actionSetAudio, actionSetCurrentTrackId,
+  actionPause, actionPlay,
 } from '../../store/types/playerTypes';
-import { getGql } from '../../utils/getGql';
-import { BACKEND_URL } from '../../constants';
+import { actionFetchTracks } from '../../store/types/trackTypes';
 
-export const TrackList = ({tracks, trackCount}) => {
+export const TrackList = ({tracks, trackCount, isLoading}) => {
   const dispatch = useDispatch();
   const playerState = useSelector(state => state.player);
-  const [trackList, setTrackList] = useState(tracks);
+
   const [page, setPage] = useState(1);
-  console.log(trackList, page);
 
   useEffect(() => {
     if (playerState.trackList.length === 0) {
@@ -26,10 +24,9 @@ export const TrackList = ({tracks, trackCount}) => {
     }
     if (playerState.isPlaying) {
       if (playerState.audio === null) {
-        const {url} = trackList.find(track => track._id === playerState.currentPlayingTrackId);
+        const {url} = playerState.trackList.find(track => track._id === playerState.currentPlayingTrackId);
         const audio = new Audio(url);
         audio.play();
-        dispatch(actionSetAudio(audio));
       } else {
         playerState.audio.play();
       }
@@ -38,72 +35,32 @@ export const TrackList = ({tracks, trackCount}) => {
     }
   }, [playerState.isPlaying]);
 
-  useEffect(() => {
-    console.log('here', 1);
-    if (playerState.audio !== null) {
-      console.log('here', 2);
-      if (playerState.audio.duration === playerState.audio.currentTime) {
-        console.log('here', 3);
-
-        playerState.audio.addEventListener('onended', togglePlayPause);
-
-        return () => {
-          playerState.audio.removeEventListener('onended', togglePlayPause);
-        };
-      }
-      ;
-    }
-  }, [playerState.audio?.currentTime]);
-
-  useEffect(() => {
-    if (playerState.audio !== null) {
-      console.log(trackList, playerState.currentPlayingTrackId);
-      const {url} = trackList.find(track => track._id === playerState.currentPlayingTrackId);
-      const audio = new Audio(url);
-      audio.play();
-      dispatch(actionSetAudio(audio));
-      const id = playerState.currentPlayingTrackId;
-      dispatch(actionPlay({
-        trackList, id,
-      }));
-    }
-  }, [playerState.currentPlayingTrackId]);
-
   const togglePlayPause = (id) => {
-    if (playerState.currentPlayingTrackId !== null && playerState.currentPlayingTrackId !== id) {
+    if (playerState.isPlaying) {
       playerState.audio.pause();
-      dispatch(actionSetCurrentTrackId(id));
-    } else if (playerState.isPlaying === false) {
-      dispatch(actionPlay({
-        trackList, id,
-      }));
+      if (playerState.currentPlayingTrackId !== id) {
+        dispatch(actionPlay({trackList: tracks, id}));
+      } else {
+        dispatch(actionPause());
+      }
     } else {
-      dispatch(actionPause());
+      dispatch(actionPlay({trackList: tracks, id}));
     }
   };
   useEffect(() => {
-    const gql = getGql(`${BACKEND_URL}/graphql`);
-    gql(`
-      query skipTracks($query: String) {
-        TrackFind(query: $query) {
-       _id url originalFileName
-        }
-      }
-  `, {query: JSON.stringify([{}, {skip: [(page - 1) * 100]}])})
-      .then(data => setTrackList(data.map(track => ({
-        ...track,
-        url: `${BACKEND_URL}/${track.url}`,
-      }))));
+    dispatch(actionFetchTracks(page));
   }, [page]);
 
   const handleChange = (e, value) => {
     setPage(value);
   };
 
-  return (
+  return isLoading ? (
+    <CircularProgress/>
+  ) : (
     <Box>
       <List>
-        {trackList.map(track => (
+        {tracks.map(track => (
           <ListItem key={track._id}>
             <IconButton
               onClick={() => togglePlayPause(track._id)}

@@ -7,7 +7,6 @@ export const Dropzone = () => {
   const dispatch = useDispatch();
   const onDrop = useCallback(acceptedFiles => {
     dispatch(actionUploadFile(acceptedFiles[0]));
-    console.log(acceptedFiles);
   }, []);
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop});
 

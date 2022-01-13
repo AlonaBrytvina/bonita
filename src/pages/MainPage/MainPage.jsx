@@ -1,34 +1,23 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { TrackList } from '../../components/TrackList/TrackList';
-import { BACKEND_URL } from '../../constants';
-import { getGql } from '../../utils/getGql';
+import { actionFetchTracks } from '../../store/types/trackTypes';
 
 export const MainPage = () => {
-  const [tracks, setTracks] = useState([]);
-  const [trackCount, setTrackCount] = useState([]);
+  const dispatch = useDispatch();
+  const tracksState = useSelector(state => state.tracks);
 
   useEffect(() => {
-    const gql = getGql(`${BACKEND_URL}/graphql`);
-    gql(`
-      query allTracks {
-        TrackFind(query: "[{}]") {
-         _id url originalFileName
-        }
-      }
-  `).then(data => setTracks(data.map(track => ({...track, url: `${BACKEND_URL}/${track.url}`}))));
-  }, []);
-
-  useEffect(() => {
-    const gql = getGql(`${BACKEND_URL}/graphql`);
-    gql(`
-      query getCount{
-           TrackCount(query:"[{}]")
-             } `).then(response => setTrackCount(response));
+    dispatch(actionFetchTracks(1));
   }, []);
 
   return (
     <div>
-      <TrackList tracks={tracks} trackCount={trackCount}/>
+      <TrackList
+        tracks={tracksState.trackList}
+        trackCount={tracksState.totalCount}
+        isLoading={tracksState.isLoading}
+      />
     </div>
   );
 };

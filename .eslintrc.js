@@ -33,6 +33,8 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'no-case-declarations': 'off',
     'no-unused-expressions': 'off',
+    'eslint-disable-next-line': 'off',
+    'no-restricted-globals ': 'off',
     'no-confusing-arrow': 'off',
     'no-use-before-define': 'off',
     'no-return-await': 'off',

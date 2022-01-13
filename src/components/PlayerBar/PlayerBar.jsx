@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Slider, styled, Typography,
 } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionChangeTime } from '../../store/types/playerTypes';
 
 export const PlayerBar = () => {
   const [position, setPosition] = useState(0);
   const playerState = useSelector(state => state.player);
-  console.log('render');
+  const dispatch = useDispatch();
 
   const onChange = e => {
-    playerState.audio.currentTime = e.target.value;
+    dispatch(actionChangeTime(e.target.value));
   };
 
   const formatDuration = value => {

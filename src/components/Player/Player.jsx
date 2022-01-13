@@ -9,15 +9,16 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { PlayerBar } from '../PlayerBar/PlayerBar';
 import {
-  actionPause, actionPlay, actionSetAudio, actionSetCurrentTrackId,
+  actionNextTrack,
+  actionPause, actionPlay, actionPreviousTrack,
 } from '../../store/types/playerTypes';
 
+const DEFAULT_VOLUME = 1;
 export const Player = () => {
   const playerState = useSelector(state => state.player);
   const dispatch = useDispatch();
-  const [volume, setVolume] = useState(1);
+  const [volume, setVolume] = useState(DEFAULT_VOLUME);
   const [muted, setMuted] = useState(false);
-  console.log(playerState);
 
   const onVolumeChange = (e) => {
     const volume = e.target.value / 100;
@@ -31,73 +32,34 @@ export const Player = () => {
   };
 
   const onBackward = () => {
-    const {trackList} = playerState;
-    const trackIndex = playerState.trackList.findIndex(track => track._id === playerState.currentPlayingTrackId);
-
-    if (trackIndex === 0) {
-      const findFirstTrack = playerState.trackList.find((track, index) => index === playerState.trackList.length - 1);
-      playerState.audio.pause();
-
-      const {url, _id} = findFirstTrack;
-      const audio = new Audio(url);
-      const id = _id;
-
-      dispatch(actionSetAudio(audio));
-      dispatch(actionPlay({trackList, id}));
-    } else {
-      const findPrevTrack = playerState.trackList.find((track, index) => index === trackIndex - 1);
-      playerState.audio.pause();
-
-      const {url, _id} = findPrevTrack;
-      const audio = new Audio(url);
-      const id = _id;
-
-      dispatch(actionSetAudio(audio));
-      dispatch(actionPlay({trackList, id}));
-    }
+    dispatch(actionPreviousTrack());
   };
 
   const onForward = () => {
-    const {trackList} = playerState;
-    console.log(trackList);
-    const trackIndex = trackList.findIndex(track => track._id === playerState.currentPlayingTrackId);
-
-    if (trackIndex === trackList.length - 1) {
-      const findFirstTrack = trackList.find((track, index) => index === 0);
-      playerState.audio.pause();
-
-      const {url, _id} = findFirstTrack;
-
-      const audio = new Audio(url);
-      const id = _id;
-
-      dispatch(actionSetAudio(audio));
-      dispatch(actionPlay({trackList, id}));
-    } else {
-      const findNextTrack = playerState.trackList.find((track, index) => index === trackIndex + 1);
-      playerState.audio.pause();
-
-      const {url, _id} = findNextTrack;
-
-      const audio = new Audio(url);
-      const id = _id;
-
-      dispatch(actionSetAudio(audio));
-      dispatch(actionPlay({trackList, id}));
-    }
+    dispatch(actionNextTrack());
   };
 
   const togglePlayPause = () => {
     const {trackList, currentPlayingTrackId} = playerState;
-    const id = currentPlayingTrackId;
+
     if (playerState.isPlaying) {
       dispatch(actionPause());
-      playerState.audio.pause();
-    } else if (playerState.isPlaying === false) {
-      dispatch(actionPlay({trackList, id}));
-      playerState.audio.play();
+    } else {
+      dispatch(actionPlay({trackList, id: currentPlayingTrackId}));
     }
   };
+
+  useEffect(() => {
+    playerState.audio?.addEventListener('ended', onForward);
+
+    return () => {
+      playerState.audio?.removeEventListener('ended', onForward);
+    };
+  }, [playerState.audio]);
+
+  useEffect(() => {
+    setVolume(DEFAULT_VOLUME);
+  }, [playerState.currentPlayingTrackId]);
 
   return (
     <Box sx={{
