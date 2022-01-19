@@ -1,18 +1,30 @@
 import React, { useState } from 'react';
 import {
-  Avatar, Button, Checkbox, FormControlLabel, Grid, OutlinedInput, Paper, TextField, Typography,
+  Alert,
+  Avatar, Box,
+  Button,
+  FormControl,
+  Grid,
+  IconButton, Input,
+  InputAdornment, InputLabel,
+  Paper, Snackbar,
+  Typography,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import './LoginPage.scss';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { RegisterPage } from '../RegisterPage/RegisterPage';
-import { actionLogin, actionLoginSuccess } from '../../store/types/authTypes';
+import { Link, useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { actionLogin } from '../../store/types/authTypes';
 
 export const LoginPage = () => {
   const dispatch = useDispatch();
+  const authToken = useSelector(state => state.auth.authToken);
   const [login, setLogin] = useState(null);
   const [password, setPassword] = useState(null);
+  const [visiblePsw, setVisiblePsw] = useState(false);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
 
   const onChangeLogin = (e) => {
     setLogin(e.target.value);
@@ -24,6 +36,16 @@ export const LoginPage = () => {
 
   const signIn = () => {
     dispatch(actionLogin({login, password}));
+    if (authToken !== null) {
+      setOpenSnackBar(true);
+    }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackBar(false);
   };
 
   return (
@@ -35,44 +57,49 @@ export const LoginPage = () => {
         container
       >
         <Grid item>
-          <Avatar>
-            <LockOutlinedIcon/>
+          <Avatar sx={{mb: '15px', backgroundColor: '#9c27b0'}}>
+            <LockOutlinedIcon color="white"/>
           </Avatar>
         </Grid>
         <Grid item>
           <Typography
             variant="h4"
-            margin="0 20px 0 10px"
           >
             Sign in
           </Typography>
         </Grid>
       </Grid>
-      <TextField
-        label="Username"
-        variant="standard"
-        placeholder="Enter username"
-        sx={{margin: '10px 0'}}
-        onChange={onChangeLogin}
-        fullWidth
-        required
-      />
-      <TextField
-        label="Password"
-        variant="standard"
-        placeholder="Enter password"
-        onChange={onChangePassword}
-        fullWidth
-        required
-      />
-      <FormControlLabel
-        control={(
-          <Checkbox
-            color="primary"
-          />
-        )}
-        label="Remember me"
-      />
+      <FormControl className="formControl" sx={{margin: '15px 0'}}>
+        <InputLabel>Username</InputLabel>
+        <Input
+          variant="standard"
+          placeholder="Enter username"
+          onChange={onChangeLogin}
+          fullWidth
+          required
+        />
+      </FormControl>
+      <FormControl className="formControl" sx={{margin: '15px 0'}}>
+        <InputLabel>Password</InputLabel>
+        <Input
+          variant="standard"
+          placeholder="Enter password"
+          onChange={onChangePassword}
+          sx={{margin: '10px 0'}}
+          type={visiblePsw ? 'text' : 'password'}
+          endAdornment={(
+            <InputAdornment position="end">
+              <IconButton onClick={() => setVisiblePsw(!visiblePsw)}>
+                {visiblePsw
+                  ? (<VisibilityIcon/>)
+                  : (<VisibilityOffIcon/>)}
+              </IconButton>
+            </InputAdornment>
+          )}
+          fullWidth
+          required
+        />
+      </FormControl>
       <Button
         type="submit"
         color="primary"
@@ -86,7 +113,8 @@ export const LoginPage = () => {
         Sign in
       </Button>
       <Typography>
-        Do you have an account?
+        {/* eslint-disable-next-line react/no-unescaped-entities */}
+        Don't you have an account?
         <Link
           to="/register"
         >
@@ -95,6 +123,19 @@ export const LoginPage = () => {
           </Button>
         </Link>
       </Typography>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+      >
+        <Alert
+          severity="success"
+          onClose={handleClose}
+        >
+          Success sign in!
+        </Alert>
+      </Snackbar>
     </Paper>
   );
 };

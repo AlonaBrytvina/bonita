@@ -11,6 +11,7 @@ export const PlayerBar = () => {
   const dispatch = useDispatch();
 
   const onChange = e => {
+    console.log(e);
     dispatch(actionChangeTime(e.target.value));
   };
 
@@ -43,7 +44,7 @@ export const PlayerBar = () => {
     <Box sx={{
       width: '100%',
       height: '20%',
-      bottom: '0',
+      marginBottom: '10px',
       backgroundColor: 'white',
       display: playerState.audio === null ? 'none' : 'flex',
       alignItems: 'center',

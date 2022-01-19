@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, IconButton, Slider, Stack,
+  Box, IconButton, Slider, Stack, Typography,
 } from '@mui/material';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import {
@@ -19,6 +19,7 @@ export const Player = () => {
   const dispatch = useDispatch();
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
   const [muted, setMuted] = useState(false);
+  const trackIndex = playerState.trackList.findIndex(track => track._id === playerState.currentPlayingTrackId);
 
   const onVolumeChange = (e) => {
     const volume = e.target.value / 100;
@@ -64,7 +65,7 @@ export const Player = () => {
   return (
     <Box sx={{
       width: '100%',
-      height: '20%',
+      height: '30vh',
       position: 'sticky',
       bottom: '0',
       backgroundColor: 'white',
@@ -74,11 +75,15 @@ export const Player = () => {
     }}
     >
       <PlayerBar/>
+      <Typography variant="caption">
+        {playerState.trackList?.[trackIndex]?.originalFileName ?? ''}
+      </Typography>
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           flexDirection: 'row',
+          marginTop: '10px',
         }}
       >
         <IconButton

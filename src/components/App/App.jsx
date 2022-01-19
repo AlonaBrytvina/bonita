@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@mui/material/styles';
 import { Header } from '../Header/Header';
@@ -12,20 +12,27 @@ import store from '../../store/store';
 import { theme } from '../../assets/theme';
 import { RegisterPage } from '../../pages/RegisterPage/RegisterPage';
 import { PrivateRoute } from '../PrivateRoute/PrivateRoute';
+import { UploadTracks } from '../../pages/UploadTracks/UploadTracks';
+import { SelectedPlaylistPage } from '../../pages/SelectedPlaylistPage/SelectedPlaylistPage';
+import { history } from '../../createHistory';
+import { ProfilePage } from '../../pages/ProfilePage/ProfilePage';
 
 export const App = () => (
   <ThemeProvider theme={theme}>
     <Provider store={store}>
-      <BrowserRouter>
+      <Router history={history}>
         <Header/>
         <Switch>
           <PrivateRoute exact path="/" component={MainPage}/>
           <PrivateRoute exact path="/playlists" component={PlaylistsPage}/>
+          <PrivateRoute exact path="/selectedPlaylist/:id" component={SelectedPlaylistPage}/>
+          <PrivateRoute exact path="/uploadTracks" component={UploadTracks}/>
+          <PrivateRoute exact path="/profile" component={ProfilePage}/>
           <Route exact path="/login" component={LoginPage}/>
           <Route exact path="/register" component={RegisterPage}/>
         </Switch>
         <Player/>
-      </BrowserRouter>
+      </Router>
     </Provider>
   </ThemeProvider>
 );

@@ -3,6 +3,7 @@ import types from '../types/authTypes';
 const initialState = {
   login: '',
   authToken: localStorage.getItem('authToken') ?? null,
+  user: null,
 };
 
 export function authReducer(state = initialState, action) {
@@ -28,6 +29,26 @@ export function authReducer(state = initialState, action) {
       return {
         ...state,
         errorMessage: action.payload,
+      };
+    case types.FETCH_FIND_USER_BY_ID:
+      return {
+        ...state,
+      };
+    case types.FETCH_FIND_USER_BY_ID_SUCCESS:
+      console.log(action.payload);
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case types.FETCH_FIND_USER_BY_ID_FAIL:
+      return {
+        ...state,
+      };
+    case types.SET_USER:
+      console.log(action.payload);
+      return {
+        ...state,
+        user: action.payload,
       };
     default:
       return state;

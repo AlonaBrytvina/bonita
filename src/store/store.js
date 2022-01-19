@@ -9,6 +9,10 @@ import { tracksReducer } from './reducers/tracksReducer';
 import { playerSaga } from './sagas/playerSaga';
 import { authReducer } from './reducers/authReducer';
 import { authSaga } from './sagas/authSaga';
+import { playlistsReducer } from './reducers/playlistsReducer';
+import { playlistsSaga } from './sagas/playlistsSaga';
+import { uploadSaga } from './sagas/uploadSaga';
+import { uploadReducer } from './reducers/uploadReducer';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -16,6 +20,8 @@ const rootReducer = combineReducers({
   player: playerReducer,
   tracks: tracksReducer,
   auth: authReducer,
+  playlists: playlistsReducer,
+  upload: uploadReducer,
 });
 
 function* rootSaga() {
@@ -23,6 +29,8 @@ function* rootSaga() {
     tracksSaga(),
     playerSaga(),
     authSaga(),
+    playlistsSaga(),
+    uploadSaga(),
   ]);
 }
 

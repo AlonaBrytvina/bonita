@@ -1,0 +1,28 @@
+.vinylPlate {
+  width: 20vh;
+  height: 20vh;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__middleCircle {
+    width: 6vh;
+    height: 6vh;
+    border-radius: 50%;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-Content: center;
+    background: linear-gradient(to left, #360930d3, #42093bd3 50%, #f0d3ecd3 100%)
+  }
+
+  &__innerCircle {
+    width: 1vh;
+    height: 1vh;
+    border-radius: 50%;
+    border: 1px solid black;
+    background-color: white;
+  }
+}
+
