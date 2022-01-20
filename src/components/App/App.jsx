@@ -16,6 +16,7 @@ import { UploadTracks } from '../../pages/UploadTracks/UploadTracks';
 import { SelectedPlaylistPage } from '../../pages/SelectedPlaylistPage/SelectedPlaylistPage';
 import { history } from '../../createHistory';
 import { ProfilePage } from '../../pages/ProfilePage/ProfilePage';
+import { UserTracks } from '../../pages/UserTracks/UserTracks';
 
 export const App = () => (
   <ThemeProvider theme={theme}>
@@ -26,6 +27,7 @@ export const App = () => (
           <PrivateRoute exact path="/" component={MainPage}/>
           <PrivateRoute exact path="/playlists" component={PlaylistsPage}/>
           <PrivateRoute exact path="/selectedPlaylist/:id" component={SelectedPlaylistPage}/>
+          <PrivateRoute exact path="/userTracks" component={UserTracks}/>
           <PrivateRoute exact path="/uploadTracks" component={UploadTracks}/>
           <PrivateRoute exact path="/profile" component={ProfilePage}/>
           <Route exact path="/login" component={LoginPage}/>

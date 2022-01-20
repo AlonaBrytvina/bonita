@@ -24,3 +24,14 @@ export const getTracksWithPage = (page = 1) => {
       url: `${BACKEND_URL}/${track.url}`,
     })));
 };
+
+export const getMyTracks = (userId) => {
+  const gql = getGql(`${BACKEND_URL}/graphql`);
+  return gql(`
+      query findMyTracks($query: String){
+            TrackFind(query: $query){
+                 _id url originalFileName
+            }
+        }
+  `, {query: JSON.stringify([{ ___owner: userId }])});
+};

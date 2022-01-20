@@ -9,6 +9,8 @@ const types = {
   FETCH_FIND_USER_BY_ID_SUCCESS: 'FETCH_FIND_USER_BY_ID_SUCCESS',
   FETCH_FIND_USER_BY_ID_FAIL: 'FETCH_FIND_USER_BY_ID_FAIL',
   SET_USER: 'SET_USER',
+  SET_NICK: 'SET_NICK',
+  SET_NICK_SUCCESS: 'SET_NICK_SUCCESS',
 };
 
 export const actionLogin = (payload) => ({type: types.FETCH_LOGIN, payload});
@@ -24,5 +26,8 @@ export const actionFindUserByIdSuccess = (payload) => ({type: types.FETCH_FIND_U
 export const actionFindUserByIdFail = (payload) => ({type: types.FETCH_FIND_USER_BY_ID_FAIL, payload});
 
 export const actionSetUser = (payload) => ({type: types.SET_USER, payload});
+
+export const actionSetNick = (payload) => ({type: types.SET_NICK, payload});
+export const actionSetNickSuccess = (payload) => ({type: types.SET_NICK_SUCCESS, payload});
 
 export default types;

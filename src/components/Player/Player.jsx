@@ -121,9 +121,9 @@ export const Player = () => {
         <IconButton onClick={onMuted}>
           {muted
             ? (<VolumeOffIcon fontSize="large"/>)
-            : volume <= 0.5 && volume !== 0
+            : volume >= 0.1 && volume <= 0.5
               ? (<VolumeDown fontSize="large"/>)
-              : volume <= 0
+              : volume === 0
                 ? (<VolumeOffIcon fontSize="large"/>)
                 : (<VolumeUp fontSize="large"/>)}
         </IconButton>

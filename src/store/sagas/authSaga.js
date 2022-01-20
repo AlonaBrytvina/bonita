@@ -8,9 +8,11 @@ import types, {
   actionRegisterFail,
   actionLogin,
   actionFindUserByIdSuccess,
-  actionFindUserByIdFail, actionSetUser,
+  actionFindUserByIdFail, actionSetUser, actionSetNickSuccess,
 } from '../types/authTypes';
-import { findUserById, login, registration } from '../../api/auth';
+import {
+  findUserById, login, registration, setNick,
+} from '../../api/auth';
 import { forwardToMainPage } from '../../utils/history';
 import { jwtDecode } from '../../utils/jwtDecode';
 
@@ -49,14 +51,24 @@ function* registerWorker(action) {
 }
 
 function* findUserWorker(action) {
-  console.log(action.payload);
-  const auth = yield select(state => state.auth);
   try {
     const user = yield call(findUserById, action.payload);
-    console.log(action.payload, auth);
     yield put(actionFindUserByIdSuccess(user));
   } catch (e) {
     yield put(actionFindUserByIdFail());
+  }
+}
+
+function* setNickWorker(action) {
+  const userId = yield select(state => state.auth.user._id);
+  console.log(action.payload, userId);
+  try {
+    const response = yield call(setNick, {id: userId, nick: action.payload });
+    console.log(response);
+    yield put(actionSetNickSuccess(response));
+    yield put(actionSetUser(response));
+  } catch (e) {
+    e.message;
   }
 }
 
@@ -64,4 +76,5 @@ export function* authSaga() {
   yield takeLatest(types.FETCH_LOGIN, loginWorker);
   yield takeLatest(types.FETCH_REGISTER, registerWorker);
   yield takeLatest(types.FETCH_FIND_USER_BY_ID, findUserWorker);
+  yield takeLatest(types.SET_NICK, setNickWorker);
 }

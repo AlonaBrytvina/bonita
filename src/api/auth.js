@@ -44,3 +44,19 @@ export const findUserById = (_id) => {
   }
      `, {id: JSON.stringify([{_id}])});
 };
+
+export const setNick = ({id, nick}) => {
+  const gql = getGql(`${BACKEND_URL}/graphql`);
+  console.log(id, nick);
+  return gql(`
+      mutation setNick{
+          UserUpsert(user: {
+             _id: "${id}", nick: "${nick}",
+             }){
+          _id, login, nick, createdAt, avatar {
+            _id, url
+            }
+          }
+      }
+  `);
+};

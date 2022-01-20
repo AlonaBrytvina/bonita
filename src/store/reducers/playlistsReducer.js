@@ -32,6 +32,7 @@ export function playlistsReducer(state = initialState, action) {
         isLoading: true,
       };
     case types.FETCH_ONE_PLAYLIST_SUCCESS:
+      console.log(action.payload);
       return {
         ...state,
         isLoading: false,

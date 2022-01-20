@@ -11,6 +11,8 @@ import types, {
   actionFetchPlaylistsSuccess,
   actionFetchOnePlaylistFail,
 } from '../types/playlistTypes';
+import { getTracksCount } from '../../api/tracks';
+import { actionFetchTracksSuccess } from '../types/trackTypes';
 
 function* getAllPlaylists(action) {
   try {
@@ -32,7 +34,13 @@ function* getOnePlaylist(action) {
   }
 }
 
+function* setQueTracksWorker(action) {
+  console.log(action.payload);
+  yield put(actionFetchOnePlaylistSuccess(action.payload));
+}
+
 export function* playlistsSaga() {
   yield takeLatest(types.FETCH_PLAYLISTS, getAllPlaylists);
   yield takeLatest(types.FETCH_ONE_PLAYLIST, getOnePlaylist);
+  yield takeLatest(types.SET_QUE_TRACKS, setQueTracksWorker);
 }

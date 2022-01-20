@@ -4,6 +4,7 @@ const initialState = {
   trackList: [],
   totalCount: 0,
   isLoading: false,
+  userTracks: [],
 };
 
 export function tracksReducer(state = initialState, action) {
@@ -19,6 +20,15 @@ export function tracksReducer(state = initialState, action) {
         trackList: action.payload.trackList,
         totalCount: action.payload.totalCount,
         isLoading: false,
+      };
+    case types.FETCH_USER_TRACKS:
+      return {
+        ...state,
+      };
+    case types.FETCH_USER_TRACKS_SUCCESS:
+      return {
+        ...state,
+        myTracks: action.payload,
       };
     default:
       return state;

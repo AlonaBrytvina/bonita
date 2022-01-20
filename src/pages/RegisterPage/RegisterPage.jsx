@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Alert,
-  Avatar,
+  Avatar, Box,
   Button,
   FormControl,
   Grid,
@@ -10,20 +10,30 @@ import {
   Paper, Snackbar,
   Typography,
 } from '@mui/material';
-import { AddCircleOutline } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { actionLogin, actionRegister } from '../../store/types/authTypes';
+import { actionRegister } from '../../store/types/authTypes';
 
 export const RegisterPage = () => {
   const [login, setLogin] = useState(null);
   const [password, setPassword] = useState(null);
   const [confirmPsw, setConfirmPsw] = useState(null);
+
   const [visiblePsw, setVisiblePsw] = useState(false);
   const [openSnackBar, setOpenSnackBar] = useState(false);
+
+  const [loginDirty, setLoginDirty] = useState(false);
+  const [pswDirty, setPswDirty] = useState(false);
+
+  const [pswConfirmDirty, setConfirmPswDirty] = useState(false);
+
+  const isPswValid = password?.length >= 4 && password?.length <= 20;
+  const isConfirmPswValid = password?.length >= 4 && password?.length <= 20;
+  const isLoginValid = login?.length >= 2 && login?.length <= 10;
+
   const dispatch = useDispatch();
   const auth = useSelector(state => state.auth);
   const history = useHistory();
@@ -43,7 +53,6 @@ export const RegisterPage = () => {
   const signUp = () => {
     if (password === confirmPsw) {
       dispatch(actionRegister({login, password}));
-      console.log(auth);
 
       if (auth.login.length !== 0 && localStorage.getItem('authToken') !== null) {
         setOpenSnackBar(!openSnackBar);
@@ -86,23 +95,27 @@ export const RegisterPage = () => {
         </Grid>
       </Grid>
       <FormControl className="formControl" sx={{mb: '10px'}}>
-        <InputLabel>Login</InputLabel>
+        <InputLabel error={!!loginDirty && !isLoginValid}>Login</InputLabel>
         <Input
           label="Login"
           variant="standard"
           placeholder="Enter login"
           sx={{margin: '10px 0'}}
           onChange={onChangeName}
+          onBlur={() => setLoginDirty(true)}
+          error={!!loginDirty && !isLoginValid}
           fullWidth
           required
         />
       </FormControl>
       <FormControl className="formControl" sx={{mb: '10px'}}>
-        <InputLabel>Password</InputLabel>
+        <InputLabel error={!!pswDirty && !isPswValid}>Password</InputLabel>
         <Input
           variant="standard"
           placeholder="Enter password"
           onChange={onChangePassword}
+          onBlur={() => setPswDirty(true)}
+          error={!!pswDirty && !isPswValid}
           sx={{margin: '10px 0'}}
           type={visiblePsw ? 'text' : 'password'}
           endAdornment={(
@@ -119,12 +132,14 @@ export const RegisterPage = () => {
         />
       </FormControl>
       <FormControl className="formControl" sx={{mb: '10px'}}>
-        <InputLabel>Confirm password</InputLabel>
+        <InputLabel error={!!pswConfirmDirty && !isConfirmPswValid}>Confirm password</InputLabel>
         <Input
           label="Confirm password"
           variant="standard"
           placeholder="Confirm password"
           onChange={confirmPassword}
+          onBlur={() => setConfirmPswDirty(true)}
+          error={!!pswConfirmDirty && !isConfirmPswValid}
           type={visiblePsw ? 'text' : 'password'}
           endAdornment={(
             <InputAdornment position="end">
@@ -138,6 +153,13 @@ export const RegisterPage = () => {
           fullWidth
           required
         />
+        {
+          (password !== null && confirmPsw !== null)
+            ? (password !== confirmPsw) || (!isPswValid && !isConfirmPswValid)
+              ? (<Box>The password confirmation does not match</Box>)
+              : ''
+            : ''
+        }
       </FormControl>
       <Button
         type="submit"
@@ -147,6 +169,7 @@ export const RegisterPage = () => {
           margin: '20px 0',
         }}
         onClick={signUp}
+        disabled={!(isLoginValid && isPswValid && isConfirmPswValid)}
         fullWidth
       >
         Sign up

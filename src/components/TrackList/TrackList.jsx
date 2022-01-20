@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   IconButton, List, ListItem, Typography,
   Box, CircularProgress,
@@ -7,8 +7,6 @@ import {
   PauseRounded, PlayArrowRounded,
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { arrayMoveImmutable } from 'array-move';
 import {
   actionPause, actionPlay,
 } from '../../store/types/playerTypes';
@@ -16,7 +14,6 @@ import {
 export const TrackList = ({tracks, isLoading}) => {
   const dispatch = useDispatch();
   const playerState = useSelector(state => state.player);
-  const [currentTracks, setCurrentTracks] = useState([]);
 
   useEffect(() => {
     if (playerState.trackList.length === 0) {
@@ -35,37 +32,6 @@ export const TrackList = ({tracks, isLoading}) => {
     }
   }, [playerState.isPlaying]);
 
-  useEffect(() => {
-    setCurrentTracks(tracks);
-  }, [tracks]);
-
-  const SortableItem = SortableElement(({track}) => (
-    <ListItem key={track._id}>
-      <IconButton
-        onClick={() => togglePlayPause(track._id)}
-      >
-        {
-          playerState.isPlaying && track._id === playerState.currentPlayingTrackId
-            ? (<PauseRounded fontSize="large" color="primary"/>)
-            : (<PlayArrowRounded fontSize="large" color="primary"/>)
-        }
-      </IconButton>
-      <Typography>{track?.originalFileName}</Typography>
-    </ListItem>
-  ));
-
-  const SortableList = SortableContainer(() => (
-    <List>
-      {currentTracks.map((track, index) => (
-        <SortableItem key={`item-${track._id}`} index={index} track={track}/>
-      ))}
-    </List>
-  ));
-
-  const onSortEnd = ({oldIndex, newIndex}) => {
-    setCurrentTracks(arrayMoveImmutable(currentTracks, oldIndex, newIndex));
-  };
-
   const togglePlayPause = (id) => {
     if (playerState.isPlaying) {
       playerState.audio.pause();
@@ -79,14 +45,30 @@ export const TrackList = ({tracks, isLoading}) => {
     }
   };
 
-  return isLoading ? (
-    <CircularProgress/>
-  ) : (
-    <Box sx={{
-      minHeight: '70vh',
-    }}
-    >
-      <SortableList onSortEnd={onSortEnd}/>
-    </Box>
-  );
+  return isLoading
+    ? (
+      <CircularProgress/>
+    ) : (
+      <Box sx={{
+        minHeight: '70vh',
+      }}
+      >
+        <List>
+          {tracks.map((track) => (
+            <ListItem key={track._id}>
+              <IconButton
+                onClick={() => togglePlayPause(track._id)}
+              >
+                {
+                  playerState.isPlaying && track._id === playerState.currentPlayingTrackId
+                    ? (<PauseRounded fontSize="large" color="primary"/>)
+                    : (<PlayArrowRounded fontSize="large" color="primary"/>)
+                }
+              </IconButton>
+              <Typography>{track?.originalFileName}</Typography>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    );
 };

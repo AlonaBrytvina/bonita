@@ -5,6 +5,7 @@ import types, { actionSetUploadFileSuccess } from '../types/uploadTypes';
 import { getGqlForUpload, getGqlForUploadTracks } from '../../utils/getGqlForUpload';
 import { jwtDecode } from '../../utils/jwtDecode';
 import { setAvatar, uploadTracks } from '../../api/upload';
+import { actionSetUser } from '../types/authTypes';
 
 function* uploadFileWorker(action) {
   const auth = yield select(state => state.auth.authToken);
@@ -17,8 +18,7 @@ function* uploadFileWorker(action) {
     const userId = token.sub.id;
 
     const result = yield call(setAvatar, {userId, avatarId});
-
-    // yield put(actionSetUploadFileSuccess());
+    yield put(actionSetUser(result));
   } catch (e) {
     e.message;
   }

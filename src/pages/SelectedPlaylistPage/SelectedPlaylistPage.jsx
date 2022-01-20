@@ -9,7 +9,6 @@ export const SelectedPlaylistPage = () => {
   const playlists = useSelector(state => state.playlists);
   const dispatch = useDispatch();
   const params = useParams();
-  console.log(params.id, playlists.selectedPlaylist);
 
   useEffect(() => {
     dispatch(actionFetchOnePlaylist(params.id));

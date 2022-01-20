@@ -35,7 +35,6 @@ export function authReducer(state = initialState, action) {
         ...state,
       };
     case types.FETCH_FIND_USER_BY_ID_SUCCESS:
-      console.log(action.payload);
       return {
         ...state,
         user: action.payload,
@@ -45,6 +44,17 @@ export function authReducer(state = initialState, action) {
         ...state,
       };
     case types.SET_USER:
+      console.log(action.payload);
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case types.SET_NICK:
+      console.log(action.payload);
+      return {
+        ...state,
+      };
+    case types.SET_NICK_SUCCESS:
       console.log(action.payload);
       return {
         ...state,
