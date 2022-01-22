@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import './GenerateGradient.scss';
 
-const GenGradient = () => {
+const rgb = () => {
   const r = Math.floor(Math.random() * 255);
   const g = Math.floor(Math.random() * 10);
   const b = Math.floor(Math.random() * 255);
@@ -15,7 +15,7 @@ export const GenerateGradient = () => {
     <Box
       className="vinylPlate"
       sx={{
-        background: `linear-gradient(${deg}deg,${GenGradient()},${GenGradient()},${GenGradient()})`,
+        background: `linear-gradient(${deg}deg,${rgb()},${rgb()},${rgb()})`,
       }}
     >
       <Box className="vinylPlate__middleCircle">

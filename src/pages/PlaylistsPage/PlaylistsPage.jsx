@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box,
+  Box, Button, ButtonGroup, CircularProgress,
   Grid, Pagination, Paper, Stack, Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { actionFetchPlaylists } from '../../store/types/playlistTypes';
+import { actionFetchPlaylists, actionFetchUserPlaylists } from '../../store/types/playlistTypes';
 import { GenerateGradient } from '../../components/GenerateGradient/GenerateGradient';
+import { forwardToCreatePlaylistPage } from '../../utils/history';
 
 export const PlaylistsPage = () => {
   const dispatch = useDispatch();
@@ -22,12 +23,49 @@ export const PlaylistsPage = () => {
     setPage(value);
   };
 
+  const showUserPlaylists = () => {
+    dispatch(actionFetchUserPlaylists());
+  };
+
+  const showAllPlaylists = () => {
+    dispatch(actionFetchPlaylists(page));
+  };
+
   return (
     <Box>
+      <ButtonGroup
+        sx={{
+          mt: '10px',
+          display: 'flex',
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+        }}
+      >
+        <Box onClick={() => forwardToCreatePlaylistPage('/uploadPlaylist')}>
+          <Button variant="outlined">
+            Create playlist
+          </Button>
+        </Box>
+        <Box>
+          <Button onClick={showAllPlaylists}>
+            Playlists
+          </Button>
+          <Button onClick={showUserPlaylists}>
+            My playlists
+          </Button>
+        </Box>
+        <Box>
+          <Button
+            variant="outlined"
+          >
+            {`Total:${state.totalCount}`}
+          </Button>
+        </Box>
+      </ButtonGroup>
       <Grid
         spacing={3}
         columns={12}
-        sx={{margin: '0'}}
+        sx={{margin: '0', width: '100%'}}
         container
       >
         {playlists.map(playlist => (
@@ -57,7 +95,7 @@ export const PlaylistsPage = () => {
                     textAlign: 'center',
                   }}
                 >
-                  <GenerateGradient />
+                  <GenerateGradient/>
                 </Box>
                 <Box
                   sx={{

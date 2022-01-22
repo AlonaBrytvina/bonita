@@ -1,8 +1,8 @@
 import types from '../types/uploadTypes';
 
 const initialState = {
-  file: null,
-  track: null,
+  file: [],
+  tracks: [],
 };
 
 export function uploadReducer(state = initialState, action) {
@@ -23,7 +23,7 @@ export function uploadReducer(state = initialState, action) {
     case types.SET_UPLOAD_TRACK_SUCCESS:
       return {
         ...state,
-        track: action.payload,
+        tracks: action.payload,
       };
     default:
       return state;

@@ -67,3 +67,52 @@ export const getPlaylistsCount = () => {
     }]),
   });
 };
+
+export const createPlaylist = (playlistName) => {
+  const gql = getGql(`${BACKEND_URL}/graphql`);
+
+  return gql(`
+      mutation createPlaylist{
+          PlaylistUpsert(playlist: {name: "${playlistName}"}){
+              _id
+          }
+      }
+  `);
+};
+
+export const addTracksToPlaylist = ({playlistId, arrayOfTracks}) => {
+  const gql = getGql(`${BACKEND_URL}/graphql`);
+
+  return gql(`
+      mutation createPlaylist{
+          PlaylistUpsert(playlist: {
+            _id: "${playlistId}"
+             tracks:{
+                 _id: "${arrayOfTracks._id}"
+             }
+          }){
+           _id tracks{
+              _id 
+           }
+         }
+      }
+`);
+};
+
+export const getUserPlaylist = (userId) => {
+  const gql = getGql(`${BACKEND_URL}/graphql`);
+
+  return gql(`
+      query findUserPlaylists($query: String){
+          PlaylistFind(query:$query){
+          _id name description
+      }
+    }
+  `, {
+    query: JSON.stringify([{
+      ___owner: userId,
+      name: {$exists: true, $ne: ''},
+      tracks: {$exists: true, $ne: []},
+    }]),
+  });
+};

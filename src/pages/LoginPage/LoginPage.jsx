@@ -12,11 +12,10 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import './LoginPage.scss';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { actionLogin } from '../../store/types/authTypes';
 
 export const LoginPage = () => {

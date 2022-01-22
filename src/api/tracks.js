@@ -25,7 +25,7 @@ export const getTracksWithPage = (page = 1) => {
     })));
 };
 
-export const getMyTracks = (userId) => {
+export const getUserTracks = (userId) => {
   const gql = getGql(`${BACKEND_URL}/graphql`);
   return gql(`
       query findMyTracks($query: String){
@@ -33,5 +33,9 @@ export const getMyTracks = (userId) => {
                  _id url originalFileName
             }
         }
-  `, {query: JSON.stringify([{ ___owner: userId }])});
+  `, {query: JSON.stringify([{ ___owner: userId }])})
+    .then(data => data.map(track => ({
+      ...track,
+      url: `${BACKEND_URL}/${track.url}`,
+    })));
 };

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Pagination, Stack } from '@mui/material';
+import {
+  Box, Button, ButtonGroup, Pagination, Stack,
+} from '@mui/material';
 import { TrackList } from '../../components/TrackList/TrackList';
-import { actionFetchTracks } from '../../store/types/trackTypes';
+import { actionFetchTracks, actionFetchUserTracks } from '../../store/types/trackTypes';
+import { forwardToUploadPage } from '../../utils/history';
 
 export const MainPage = () => {
   const dispatch = useDispatch();
@@ -17,8 +20,46 @@ export const MainPage = () => {
     setPage(value);
   };
 
+  const showMyTracks = () => {
+    dispatch(actionFetchUserTracks());
+  };
+
+  const showAllTracks = () => {
+    dispatch(actionFetchTracks(page));
+  };
+
   return (
     <Box>
+      <ButtonGroup
+        sx={{
+          mt: '10px',
+          display: 'flex',
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+        }}
+      >
+        <Box>
+          <Button
+            onClick={() => forwardToUploadPage('/uploadTracks')}
+            variant="outlined"
+          >
+            Upload tracks
+          </Button>
+        </Box>
+        <Box>
+          <Button onClick={showAllTracks}>
+            Tracks
+          </Button>
+          <Button onClick={showMyTracks}>
+            My tracks
+          </Button>
+        </Box>
+        <Button
+          variant="outlined"
+        >
+          {`Total: ${tracksState.totalCount}`}
+        </Button>
+      </ButtonGroup>
       <TrackList
         tracks={tracksState.trackList}
         isLoading={tracksState.isLoading}

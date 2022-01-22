@@ -1,10 +1,12 @@
 import {
   call, put, select, takeLatest,
 } from 'redux-saga/effects';
-import types, { actionSetUploadFileSuccess } from '../types/uploadTypes';
+import types, {
+  actionSetUploadTrackSuccess,
+} from '../types/uploadTypes';
 import { getGqlForUpload, getGqlForUploadTracks } from '../../utils/getGqlForUpload';
 import { jwtDecode } from '../../utils/jwtDecode';
-import { setAvatar, uploadTracks } from '../../api/upload';
+import { setAvatar } from '../../api/upload';
 import { actionSetUser } from '../types/authTypes';
 
 function* uploadFileWorker(action) {
@@ -28,9 +30,12 @@ function* uploadTrackWorker(action) {
   try {
     const response = yield call(getGqlForUploadTracks, action.payload);
     const trackId = response._id;
+    console.log(response);
 
-    const result = yield call(uploadTracks, trackId);
-    yield put(actionSetUploadFileSuccess(result));
+    yield put(actionSetUploadTrackSuccess({...response, originalFileName: action.payload.name}));
+
+    // const result = yield call(uploadTracks, trackId);
+    // console.log(result);
   } catch (e) {
     e.message;
   }

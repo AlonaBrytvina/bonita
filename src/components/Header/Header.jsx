@@ -24,14 +24,6 @@ export const Header = () => {
           <Link to="/playlists">
             <Button variant="secondary">Playlists</Button>
           </Link>
-          <Link to="/uploadTracks">
-            <IconButton
-              size="large"
-              color="inherit"
-            >
-              <UploadIcon/>
-            </IconButton>
-          </Link>
           <Link
             to="/profile"
           >

@@ -1,75 +1,93 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Box, Button, Grid, Paper, Typography,
+  Typography,
+  Box, Paper, Grid, Avatar, Alert, Snackbar,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { useDropzone } from 'react-dropzone';
-import UploadIcon from '@mui/icons-material/Upload';
-import { Link } from 'react-router-dom';
+import { arrayMoveImmutable } from 'array-move';
+import AudioFileIcon from '@mui/icons-material/AudioFile';
+import { SortableList } from '../../components/Dropzone/SortableList';
+import { Dropzone } from '../../components/Dropzone/Dropzone';
 import { actionSetUploadTrack } from '../../store/types/uploadTypes';
+import './UploadTracks.scss';
 
 export const UploadTracks = () => {
   const dispatch = useDispatch();
+  const upload = useSelector(state => state?.upload.tracks);
+
+  const [uploadTracks, setUploadTracks] = useState([]);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+
+  useEffect(() => {
+    if (upload?.length !== 0) {
+      setUploadTracks(prevState => [
+        ...prevState,
+        {...upload},
+      ]);
+    }
+  }, [upload]);
+
   const onDrop = useCallback(acceptedFiles => {
-    console.log(acceptedFiles);
     dispatch(actionSetUploadTrack(acceptedFiles[0]));
   }, []);
-  const {getRootProps, getInputProps} = useDropzone({onDrop});
+
+  const onSortEnd = ({oldIndex, newIndex}) => {
+    setUploadTracks(arrayMoveImmutable(uploadTracks, oldIndex, newIndex));
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
 
   return (
-    <Box
-      sx={{
-        m: '10px 0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        height: '65vh',
-      }}
-    >
-      <Paper
-        elevation={10}
-        sx={{
-          height: '100%',
-          width: '100vh',
-        }}
-      >
+    <Box>
+      <Paper elevation={10} className="paperStyleForPlaylist">
         <Grid
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
           container
         >
-          <Box
+          <Grid item>
+            <Avatar sx={{mb: '15px', backgroundColor: '#9c27b0'}}>
+              <AudioFileIcon color="white"/>
+            </Avatar>
+          </Grid>
+          <Grid
             sx={{
-              width: '100%',
-              height: '50vh',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column',
+              mb: '20px',
             }}
-            {...getRootProps()}
+            item
           >
-            <UploadIcon
-              color="primary"
-              sx={{
-                height: '40px',
-                width: '40px',
-                mb: '20px',
-              }}
-            />
-            <input {...getInputProps()} />
-            <Typography>
-              Drop file to upload
+            <Typography
+              variant="h4"
+            >
+              Add track
             </Typography>
-          </Box>
+          </Grid>
         </Grid>
+        <Box>
+          <Dropzone onDrop={onDrop}/>
+          <SortableList tracks={uploadTracks} onSortEnd={onSortEnd}/>
+          <Typography>If you want to add track drag and drop an audio file</Typography>
+        </Box>
       </Paper>
-      <Link
-        to="/userTracks"
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
       >
-        <Button>
-          My uploaded tracks
-        </Button>
-      </Link>
+        <Alert
+          severity="success"
+          onClose={handleClose}
+        >
+          Success! Track was added!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

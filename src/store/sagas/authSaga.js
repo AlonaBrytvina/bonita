@@ -17,13 +17,14 @@ import { forwardToMainPage } from '../../utils/history';
 import { jwtDecode } from '../../utils/jwtDecode';
 
 function* loginWorker(action) {
-  const auth = yield select(state => state.auth.authToken);
+  // const auth = yield select(state => state.auth.authToken);
   try {
     localStorage.removeItem('authToken');
     const authToken = yield call(login, action.payload);
+
     localStorage.setItem('authToken', authToken);
     yield put(actionLoginSuccess({authToken, login: action.payload.login}));
-    const token = yield call(jwtDecode, auth);
+    const token = yield call(jwtDecode, authToken);
     const {id} = token.sub;
 
     const user = yield call(findUserById, id);
@@ -43,7 +44,7 @@ function* registerWorker(action) {
     const userData = yield call(registration, action.payload);
     yield put(actionRegisterSuccess({authToken: null, login: userData.login}));
     if (userData._id.length !== 0) {
-      yield call(loginWorker, actionLogin({login: action.payload.login, password: action.payload.password}));
+      yield put(actionLogin({login: action.payload.login, password: action.payload.password}));
     }
   } catch (e) {
     yield put(actionRegisterFail(e.message));
@@ -61,10 +62,9 @@ function* findUserWorker(action) {
 
 function* setNickWorker(action) {
   const userId = yield select(state => state.auth.user._id);
-  console.log(action.payload, userId);
+
   try {
     const response = yield call(setNick, {id: userId, nick: action.payload });
-    console.log(response);
     yield put(actionSetNickSuccess(response));
     yield put(actionSetUser(response));
   } catch (e) {

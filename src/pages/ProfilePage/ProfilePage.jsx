@@ -111,7 +111,6 @@ export const ProfilePage = () => {
                   className="avatar"
                   onMouseEnter={() => {
                     setIsHovered(!isHovered);
-                    console.log(isHovered);
                   }}
                   sx={{width: 100, height: 100}}
                   src={
@@ -168,6 +167,7 @@ export const ProfilePage = () => {
                   <EditIcon
                     fontSize="medium"
                     color="primary"
+                    cursor="pointer"
                     onClick={() => setOpenNick(!openNick)}
                   />
                 </Grid>

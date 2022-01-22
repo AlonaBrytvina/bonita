@@ -6,7 +6,9 @@ import types, {
   actionFetchTracksFail,
   actionFetchTracksSuccess,
 } from '../types/trackTypes';
-import { getMyTracks, getTracksCount, getTracksWithPage } from '../../api/tracks';
+import {
+  getTracksCount, getTracksWithPage, getUserTracks,
+} from '../../api/tracks';
 
 function* fetchTracksWorker(action) {
   try {
@@ -19,15 +21,14 @@ function* fetchTracksWorker(action) {
   }
 }
 
-function* fetchMyTracksWorker(action) {
-  const userId = yield select(state => state.auth.user._id);
-  console.log(action.payload, userId);
-  const myTracks = yield call(getMyTracks, userId);
-  console.log(myTracks);
-  yield put(actionFetchUserTracksSuccess(myTracks));
+function* fetchUserTracksWorker(action) {
+  const userId = yield select(state => state?.auth?.user?._id);
+  const userTracks = yield call(getUserTracks, userId);
+
+  yield put(actionFetchUserTracksSuccess({userTracks, totalCount: userTracks.length}));
 }
 
 export function* tracksSaga() {
   yield takeLatest(types.FETCH_TRACKS, fetchTracksWorker);
-  yield takeLatest(types.FETCH_USER_TRACKS, fetchMyTracksWorker);
+  yield takeLatest(types.FETCH_USER_TRACKS, fetchUserTracksWorker);
 }

@@ -5,7 +5,12 @@ const types = {
   FETCH_ONE_PLAYLIST: 'FETCH_ONE_PLAYLIST',
   FETCH_ONE_PLAYLIST_SUCCESS: 'FETCH_ONE_PLAYLIST_SUCCESS',
   FETCH_ONE_PLAYLIST_FAIL: 'FETCH_ONE_PLAYLIST_FAIL',
-  SET_QUE_TRACKS: 'SET_QUE_TRACKS',
+  CREATE_PLAYLIST: 'CREATE_PLAYLIST',
+  ADD_TRACKS_TO_PLAYLIST: 'ADD_TRACKS_TO_PLAYLIST',
+  CREATE_PLAYLIST_BY_ID_SUCCESS: 'CREATE_PLAYLIST_BY_ID_SUCCESS',
+  CREATE_PLAYLIST_WITH_TRACKS_SUCCESS: 'CREATE_PLAYLIST_WITH_TRACKS_SUCCESS',
+  FETCH_USER_PLAYLISTS: 'FETCH_USER_PLAYLISTS',
+  FETCH_USER_PLAYLISTS_SUCCESS: 'FETCH_USER_PLAYLISTS_SUCCESS',
 };
 
 export const actionFetchPlaylists = (payload) => ({type: types.FETCH_PLAYLISTS, payload});
@@ -16,6 +21,11 @@ export const actionFetchOnePlaylist = (payload) => ({type: types.FETCH_ONE_PLAYL
 export const actionFetchOnePlaylistSuccess = (payload) => ({type: types.FETCH_ONE_PLAYLIST_SUCCESS, payload});
 export const actionFetchOnePlaylistFail = (payload) => ({type: types.FETCH_ONE_PLAYLIST_FAIL, payload});
 
-export const setQueTracks = (payload) => ({type: types.SET_QUE_TRACKS, payload});
+export const actionCreatePlaylist = (payload) => ({type: types.CREATE_PLAYLIST, payload});
+export const actionCreatePlaylistByIdSuccess = (payload) => ({type: types.CREATE_PLAYLIST_BY_ID_SUCCESS, payload});
+export const actionCreatePlaylistWithTracksSuccess = (payload) => ({type: types.CREATE_PLAYLIST_WITH_TRACKS_SUCCESS, payload});
+
+export const actionFetchUserPlaylists = (payload) => ({type: types.FETCH_USER_PLAYLISTS, payload});
+export const actionFetchUserPlaylistsSuccess = (payload) => ({type: types.FETCH_USER_PLAYLISTS_SUCCESS, payload});
 
 export default types;
