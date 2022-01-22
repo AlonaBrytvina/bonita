@@ -24,12 +24,6 @@ export const App = () => (
       <Router history={history}>
         <Header/>
         <Switch>
-          {/* TODO: move all routes to constants and reuse it at other places like
-            const ROUTES = {
-              MAIN_PAGE: '/',
-              PLAYLISTS_PAGE: '/playlists',
-            };
-          */}
           <PrivateRoute exact path="/" component={MainPage}/>
           <PrivateRoute exact path="/playlists" component={PlaylistsPage}/>
           <PrivateRoute exact path="/selectedPlaylist/:id" component={SelectedPlaylistPage}/>
