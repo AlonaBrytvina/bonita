@@ -1,12 +1,11 @@
 import { getGql } from '../utils/getGql';
-import { BACKEND_URL } from '../constants';
 
 export const login = (payload) => {
   const {login, password} = payload;
-  const gql = getGql(`${BACKEND_URL}/graphql`);
-  return gql(`
-      query log ($login:String!, $password:String!) {
-       login(login:$login, password:$password)
+
+  return getGql(`
+       query log ($login:String!, $password:String!) {
+            login(login:$login, password:$password)
        }
      `, {
     login,
@@ -16,14 +15,17 @@ export const login = (payload) => {
 
 export const registration = (payload) => {
   const {login, password} = payload;
-  const gql = getGql(`${BACKEND_URL}/graphql`);
-  return gql(
-    `mutation reg($login: String!, $password: String!){
-         createUser(login:$login,
-              password: $password){
-         _id login
+
+  return getGql(
+    `
+      mutation reg($login: String!, $password: String!){
+         createUser(
+             login:$login,
+             password: $password
+         ){
+             _id login
          }
-    }
+      }
     `,
     {
       login,
@@ -32,31 +34,27 @@ export const registration = (payload) => {
   );
 };
 
-export const findUserById = (_id) => {
-  const gql = getGql(`${BACKEND_URL}/graphql`);
-  return gql(`
-      query findUserById($id: String){
-            UserFindOne(query: $id) {
-                _id, login, nick, createdAt, avatar {
-            _id, url
-            }
-      }
-  }
-     `, {id: JSON.stringify([{_id}])});
-};
+export const findUserById = (_id) => getGql(`
+    query findUserById($id: String){
+       UserFindOne(query: $id) {
+           _id, login, nick, createdAt, avatar {
+               _id, url
+           }
+       }
+    }
+     `, {
+  id: JSON.stringify([{_id}]),
+});
 
-export const setNick = ({id, nick}) => {
-  const gql = getGql(`${BACKEND_URL}/graphql`);
-  console.log(id, nick);
-  return gql(`
+export const setNick = ({id, nick}) => getGql(`
       mutation setNick{
           UserUpsert(user: {
              _id: "${id}", nick: "${nick}",
-             }){
-          _id, login, nick, createdAt, avatar {
-            _id, url
-            }
+             }
+          ){
+             _id, login, nick, createdAt, avatar {
+                  _id, url
+             }
           }
       }
   `);
-};

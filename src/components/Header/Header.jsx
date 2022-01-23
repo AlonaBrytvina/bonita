@@ -1,40 +1,65 @@
 import React from 'react';
 import './Header.scss';
-import { AccountCircle } from '@mui/icons-material';
-import UploadIcon from '@mui/icons-material/Upload';
 import {
-  AppBar, Toolbar, IconButton, Typography, Box, Button,
+  AppBar, Toolbar, IconButton, Box, Button, Avatar, Typography,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import LoginIcon from '@mui/icons-material/Login';
+import AudiotrackIcon from '@mui/icons-material/Audiotrack';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { ReactComponent as Vector } from '../../assets/svgs/Vector.svg';
+import { buildUrl } from '../../utils/buildUrl';
 
 export const Header = () => {
-  console.log(localStorage.getItem('authToken') ? './profile' : './login');
+  const user = useSelector(state => state.auth.user);
+  console.log(user);
+
   return (
     <AppBar position="static">
-      <Toolbar sx={{display: 'flex', justifyContent: 'space-between'}}>
-        <Vector className="logo"/>
+      <Toolbar sx={{display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
+        <Link to="/">
+          <Vector className="logo"/>
+        </Link>
         <Box sx={{
-          width: '50%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          width: '20%',
+          display: 'flex',
+          justifyContent: 'space-around',
+          alignItems: 'center',
         }}
         >
           <Link to="/">
-            <Button variant="secondary">Main</Button>
+            <Button variant="secondary">
+              <AudiotrackIcon/>
+              <Typography variant="button" >Tracks</Typography>
+            </Button>
           </Link>
           <Link to="/playlists">
-            <Button variant="secondary">Playlists</Button>
-          </Link>
-          <Link
-            to="/profile"
-          >
-            <IconButton
-              size="large"
-              color="inherit"
-            >
-              <AccountCircle/>
-            </IconButton>
+            <Button variant="secondary">
+              <FormatListBulletedIcon/>
+              <Typography variant="button" marginLeft="5px">Playlists</Typography>
+            </Button>
           </Link>
         </Box>
+        <Link
+          to={user !== null ? '/profile' : '/login'}
+        >
+          <IconButton
+            size="large"
+            color="inherit"
+          >
+            {user !== null && user !== undefined
+              ? (
+                <Avatar
+                  className="avatar"
+                  sx={{width: 30, height: 30}}
+                  src={buildUrl(user?.avatar?.url ?? '')}
+                />
+              ) : (
+                <LoginIcon/>
+              )}
+          </IconButton>
+        </Link>
       </Toolbar>
     </AppBar>
   );

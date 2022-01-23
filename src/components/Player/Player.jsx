@@ -14,11 +14,13 @@ import {
 } from '../../store/types/playerTypes';
 
 const DEFAULT_VOLUME = 1;
+
 export const Player = () => {
   const playerState = useSelector(state => state.player);
   const dispatch = useDispatch();
+
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
-  const [muted, setMuted] = useState(false);
+
   const trackIndex = playerState.trackList.findIndex(track => track._id === playerState.currentPlayingTrackId);
 
   const onVolumeChange = (e) => {
@@ -28,8 +30,13 @@ export const Player = () => {
   };
 
   const onMuted = () => {
-    setMuted(!muted);
-    !muted ? playerState.audio.volume = 0 : playerState.audio.volume = volume;
+    if (volume === 0) {
+      playerState.audio.volume = DEFAULT_VOLUME;
+      setVolume(DEFAULT_VOLUME);
+    } else {
+      playerState.audio.volume = 0;
+      setVolume(playerState.audio.volume);
+    }
   };
 
   const onBackward = () => {
@@ -119,9 +126,9 @@ export const Player = () => {
         }
       >
         <IconButton onClick={onMuted}>
-          {muted
+          {volume === 0
             ? (<VolumeOffIcon fontSize="large"/>)
-            : volume >= 0.1 && volume <= 0.5
+            : volume >= 0.01 && volume <= 0.5
               ? (<VolumeDown fontSize="large"/>)
               : volume === 0
                 ? (<VolumeOffIcon fontSize="large"/>)

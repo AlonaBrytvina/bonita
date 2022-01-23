@@ -1,41 +1,42 @@
 import { getGql } from '../utils/getGql';
 import { BACKEND_URL } from '../constants';
 
-export const getTracksCount = () => {
-  const gql = getGql(`${BACKEND_URL}/graphql`);
-  return gql(`
+export const getTracksCount = () => getGql(`
       query getCount {
-       TrackCount(query:"[{}]")
+          TrackCount(query:"[{}]")
       } 
   `);
-};
 
-export const getTracksWithPage = (page = 1) => {
-  const gql = getGql(`${BACKEND_URL}/graphql`);
-  return gql(`
+export const getTracksWithPage = (page = 1) => getGql(`
       query skipTracks($query: String) {
         TrackFind(query: $query) {
-       _id url originalFileName
+            _id url originalFileName
         }
       }
   `, {query: JSON.stringify([{}, {skip: [(page - 1) * 100]}])})
-    .then(data => data.map(track => ({
-      ...track,
-      url: `${BACKEND_URL}/${track.url}`,
-    })));
-};
+  .then(data => data.map(track => ({
+    ...track,
+    url: `${BACKEND_URL}/${track.url}`,
+  })));
 
-export const getUserTracks = (userId) => {
-  const gql = getGql(`${BACKEND_URL}/graphql`);
-  return gql(`
+export const getUserTracks = ({userId, page = 1}) => getGql(`
       query findMyTracks($query: String){
             TrackFind(query: $query){
                  _id url originalFileName
             }
-        }
-  `, {query: JSON.stringify([{ ___owner: userId }])})
-    .then(data => data.map(track => ({
-      ...track,
-      url: `${BACKEND_URL}/${track.url}`,
-    })));
-};
+      }
+  `, {
+  query: JSON.stringify([
+    {___owner: userId},
+    {skip: [(page - 1) * 100]}]),
+})
+  .then(data => data.map(track => ({
+    ...track,
+    url: `${BACKEND_URL}/${track.url}`,
+  })));
+
+export const getUserTracksCount = (userId) => getGql(`
+      query getCount($query: String){
+           TrackCount(query: $query)
+      } 
+  `, {query: JSON.stringify([{___owner: userId}])});

@@ -1,22 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, ButtonGroup, CircularProgress,
+  Box, Button, ButtonGroup,
   Grid, Pagination, Paper, Stack, Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+
+import AddBoxIcon from '@mui/icons-material/AddBox';
 import { actionFetchPlaylists, actionFetchUserPlaylists } from '../../store/types/playlistTypes';
 import { GenerateGradient } from '../../components/GenerateGradient/GenerateGradient';
-import { forwardToCreatePlaylistPage } from '../../utils/history';
+import { forwardToPage } from '../../utils/history';
 
 export const PlaylistsPage = () => {
   const dispatch = useDispatch();
   const state = useSelector(state => state.playlists);
   const {playlists, totalCount} = state;
+
   const [page, setPage] = useState(1);
+  const [selectedFilter, setSelectedFilter] = useState('all');
 
   useEffect(() => {
     dispatch(actionFetchPlaylists(page));
+  }, []);
+
+  useEffect(() => {
+    if (selectedFilter === 'all') {
+      dispatch(actionFetchPlaylists(page));
+    } else if (selectedFilter === 'my') {
+      dispatch(actionFetchUserPlaylists(page));
+    }
   }, [page]);
 
   const handleChange = (e, value) => {
@@ -24,10 +36,14 @@ export const PlaylistsPage = () => {
   };
 
   const showUserPlaylists = () => {
-    dispatch(actionFetchUserPlaylists());
+    setSelectedFilter('my');
+    setPage(1);
+    dispatch(actionFetchUserPlaylists(page));
   };
 
   const showAllPlaylists = () => {
+    setSelectedFilter('all');
+    setPage(1);
     dispatch(actionFetchPlaylists(page));
   };
 
@@ -35,50 +51,63 @@ export const PlaylistsPage = () => {
     <Box>
       <ButtonGroup
         sx={{
-          mt: '10px',
           display: 'flex',
-          justifyContent: 'space-evenly',
+          justifyContent: 'space-between',
           alignItems: 'center',
+          m: '10px 50px',
         }}
       >
-        <Box onClick={() => forwardToCreatePlaylistPage('/uploadPlaylist')}>
-          <Button variant="outlined">
-            Create playlist
-          </Button>
-        </Box>
         <Box>
-          <Button onClick={showAllPlaylists}>
-            Playlists
-          </Button>
-          <Button onClick={showUserPlaylists}>
-            My playlists
+          <Button variant="outlined" onClick={() => forwardToPage('/uploadPlaylist')}>
+            <AddBoxIcon fontSize="small"/>
+            <Typography marginLeft="5px" variant="button">Create playlist</Typography>
           </Button>
         </Box>
         <Box>
           <Button
-            variant="outlined"
+            variant={selectedFilter === 'all' ? 'contained' : 'outlined'}
+            onClick={showAllPlaylists}
           >
-            {`Total:${state.totalCount}`}
+            Playlists
           </Button>
+          <Button
+            variant={selectedFilter === 'my' ? 'contained' : 'outlined'}
+            onClick={showUserPlaylists}
+          >
+            My playlists
+          </Button>
+        </Box>
+        <Box>
+          <Typography
+            variant="button"
+            color="primary"
+            cursor="default"
+          >
+            {`Total - ${state.totalCount}`}
+          </Typography>
         </Box>
       </ButtonGroup>
       <Grid
         spacing={3}
-        columns={12}
-        sx={{margin: '0', width: '100%'}}
+        columns={10}
+        sx={{
+          margin: '0',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
         container
       >
         {playlists.map(playlist => (
           <Grid
             key={playlist._id}
-            sx={{mb: '5%'}}
             item
           >
             <Link to={`/selectedPlaylist/${playlist._id}`}>
               <Paper
                 sx={{
                   minHeight: '30vh',
-                  width: '20vh',
+                  width: '25vh',
                   display: 'flex',
                   alignItems: 'center',
                   flexDirection: 'column',
@@ -127,7 +156,7 @@ export const PlaylistsPage = () => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          mb: '3%',
+          m: '3%',
         }}
       >
         <Pagination

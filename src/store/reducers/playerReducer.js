@@ -1,5 +1,4 @@
 import types from '../types/playerTypes';
-import { BACKEND_URL } from '../../constants';
 
 const initialState = {
   trackList: [],

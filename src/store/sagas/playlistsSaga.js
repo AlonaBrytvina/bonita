@@ -55,8 +55,9 @@ function* createUserPlaylistWorker(action) {
 }
 
 function* fetchUserPlaylistsWorker(action) {
+  const page = action.payload;
   const userId = yield select(state => state?.auth?.user?._id);
-  const userPlaylists = yield call(getUserPlaylist, userId);
+  const userPlaylists = yield call(getUserPlaylist, {userId, page});
 
   yield put(actionFetchUserPlaylistsSuccess({userPlaylists, totalCount: userPlaylists.length}));
 }

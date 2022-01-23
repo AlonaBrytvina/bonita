@@ -8,12 +8,12 @@ import types, {
   actionRegisterFail,
   actionLogin,
   actionFindUserByIdSuccess,
-  actionFindUserByIdFail, actionSetUser, actionSetNickSuccess,
+  actionSetUser, actionSetNickSuccess,
 } from '../types/authTypes';
 import {
   findUserById, login, registration, setNick,
 } from '../../api/auth';
-import { forwardToMainPage } from '../../utils/history';
+import { forwardToPage } from '../../utils/history';
 import { jwtDecode } from '../../utils/jwtDecode';
 
 function* loginWorker(action) {
@@ -32,7 +32,7 @@ function* loginWorker(action) {
     yield put(actionFindUserByIdSuccess(user));
     yield put(actionSetUser(user));
 
-    yield call(forwardToMainPage, '/');
+    yield call(forwardToPage, '/');
   } catch (e) {
     yield put(actionLoginFail(e.message));
   }
@@ -52,24 +52,20 @@ function* registerWorker(action) {
 }
 
 function* findUserWorker(action) {
-  try {
-    const user = yield call(findUserById, action.payload);
-    yield put(actionFindUserByIdSuccess(user));
-  } catch (e) {
-    yield put(actionFindUserByIdFail());
-  }
+  const user = yield call(findUserById, action.payload);
+  yield put(actionFindUserByIdSuccess(user));
 }
 
 function* setNickWorker(action) {
   const userId = yield select(state => state.auth.user._id);
+  const response = yield call(setNick, {id: userId, nick: action.payload});
 
-  try {
-    const response = yield call(setNick, {id: userId, nick: action.payload });
-    yield put(actionSetNickSuccess(response));
-    yield put(actionSetUser(response));
-  } catch (e) {
-    e.message;
-  }
+  yield put(actionSetNickSuccess(response));
+  yield put(actionSetUser(response));
+}
+
+function* logOutWorker(action) {
+  yield put(actionSetUser());
 }
 
 export function* authSaga() {
@@ -77,4 +73,5 @@ export function* authSaga() {
   yield takeLatest(types.FETCH_REGISTER, registerWorker);
   yield takeLatest(types.FETCH_FIND_USER_BY_ID, findUserWorker);
   yield takeLatest(types.SET_NICK, setNickWorker);
+  yield takeLatest(types.LOG_OUT, logOutWorker);
 }

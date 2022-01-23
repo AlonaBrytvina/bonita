@@ -13,6 +13,7 @@ import { playlistsReducer } from './reducers/playlistsReducer';
 import { playlistsSaga } from './sagas/playlistsSaga';
 import { uploadSaga } from './sagas/uploadSaga';
 import { uploadReducer } from './reducers/uploadReducer';
+import { loadState, saveState, stateToStorageSelector } from '../helpers';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -36,11 +37,16 @@ function* rootSaga() {
 
 const store = createStore(
   rootReducer,
+  loadState(),
   compose(
     applyMiddleware(sagaMiddleware),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   ),
 );
+
+store.subscribe(() => {
+  saveState(stateToStorageSelector(store.getState()));
+});
 
 sagaMiddleware.run(rootSaga);
 

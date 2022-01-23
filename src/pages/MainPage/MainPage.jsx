@@ -1,30 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box, Button, ButtonGroup, Pagination, Stack,
+  Box, Button, ButtonGroup, Pagination, Stack, Typography,
 } from '@mui/material';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { TrackList } from '../../components/TrackList/TrackList';
 import { actionFetchTracks, actionFetchUserTracks } from '../../store/types/trackTypes';
-import { forwardToUploadPage } from '../../utils/history';
+import { forwardToPage } from '../../utils/history';
 
 export const MainPage = () => {
   const dispatch = useDispatch();
   const tracksState = useSelector(state => state.tracks);
+
   const [page, setPage] = useState(1);
+  const [selectedFilter, setSelectedFilter] = useState('all');
 
   useEffect(() => {
-    dispatch(actionFetchTracks(page));
+    if (selectedFilter === 'all') {
+      dispatch(actionFetchTracks(page));
+    } else if (selectedFilter === 'my') {
+      dispatch(actionFetchUserTracks(page));
+    }
   }, [page]);
 
   const handleChange = (e, value) => {
     setPage(value);
   };
 
-  const showMyTracks = () => {
-    dispatch(actionFetchUserTracks());
+  const showUserTracks = () => {
+    setSelectedFilter('my');
+    setPage(1);
+    dispatch(actionFetchUserTracks(page));
   };
 
   const showAllTracks = () => {
+    setSelectedFilter('all');
+    setPage(1);
     dispatch(actionFetchTracks(page));
   };
 
@@ -32,33 +43,42 @@ export const MainPage = () => {
     <Box>
       <ButtonGroup
         sx={{
-          mt: '10px',
+          m: '10px 30px',
           display: 'flex',
-          justifyContent: 'space-evenly',
+          justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
         <Box>
           <Button
-            onClick={() => forwardToUploadPage('/uploadTracks')}
+            onClick={() => forwardToPage('/uploadTracks')}
             variant="outlined"
           >
-            Upload tracks
+            <FileUploadIcon fontSize="small"/>
+            <Typography marginLeft="5px" variant="button">Upload tracks</Typography>
           </Button>
         </Box>
         <Box>
-          <Button onClick={showAllTracks}>
+          <Button
+            variant={selectedFilter === 'all' ? 'contained' : 'outlined'}
+            onClick={showAllTracks}
+          >
             Tracks
           </Button>
-          <Button onClick={showMyTracks}>
+          <Button
+            variant={selectedFilter === 'my' ? 'contained' : 'outlined'}
+            onClick={showUserTracks}
+          >
             My tracks
           </Button>
         </Box>
-        <Button
-          variant="outlined"
+        <Typography
+          variant="button"
+          color="primary"
+          cursor="default"
         >
-          {`Total: ${tracksState.totalCount}`}
-        </Button>
+          {`Total - ${tracksState.totalCount}`}
+        </Typography>
       </ButtonGroup>
       <TrackList
         tracks={tracksState.trackList}

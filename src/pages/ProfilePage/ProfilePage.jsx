@@ -1,18 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Avatar, Box, Button, Grid, Input, InputAdornment, Paper, TextField, Typography, useTheme,
+  Avatar, Box, Button, Grid, Input, InputAdornment, Paper, Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import EditIcon from '@mui/icons-material/Edit';
 import { useDropzone } from 'react-dropzone';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { actionFindUserById, actionSetNick } from '../../store/types/authTypes';
+import {
+  actionFindUserById, actionLogOut, actionSetNick,
+} from '../../store/types/authTypes';
 import { history } from '../../createHistory';
 import { jwtDecode } from '../../utils/jwtDecode';
 import { actionSetUploadFile } from '../../store/types/uploadTypes';
-import { BACKEND_URL } from '../../constants';
 import './ProfilePage.scss';
+import { buildUrl } from '../../utils/buildUrl';
 
 export const ProfilePage = () => {
   const dispatch = useDispatch();
@@ -28,6 +30,7 @@ export const ProfilePage = () => {
   const {getRootProps, getInputProps} = useDropzone({onDrop});
 
   useEffect(() => {
+    // findUser();
     if (user === null && localStorage.getItem('authToken') !== null) {
       const token = jwtDecode(localStorage.getItem('authToken'));
       const {id} = token.sub;
@@ -37,23 +40,20 @@ export const ProfilePage = () => {
     }
   }, []);
 
-  console.log(user?.nick);
-
   useEffect(() => {
     setCurrentNick(user?.nick);
   }, [user?.nick]);
 
   const logOut = () => {
     localStorage.removeItem('authToken');
-    if (localStorage.getItem('authToken') === null) {
-      history.push('/login');
-    }
+    dispatch(actionLogOut());
+    history.push('/login');
   };
 
   const onChangeNick = (e) => {
     setCurrentNick(e.target.value);
   };
-  console.log(user);
+
   const closeAndGetChangedNick = () => {
     setOpenNick(!openNick);
     console.log(currentNick, user);
@@ -107,18 +107,25 @@ export const ProfilePage = () => {
                 </Avatar>
               </Box>
               <Box>
-                <Avatar
-                  className="avatar"
-                  onMouseEnter={() => {
-                    setIsHovered(!isHovered);
-                  }}
-                  sx={{width: 100, height: 100}}
-                  src={
-                    user !== null
-                      ? (`${BACKEND_URL}/${user?.avatar?.url}`)
-                      : null
-                  }
-                />
+                {user?.avatar?.url !== null
+                  ? (
+                    <Avatar
+                      className="avatar"
+                      onMouseEnter={() => {
+                        setIsHovered(!isHovered);
+                      }}
+                      sx={{width: 100, height: 100}}
+                      src={buildUrl(user?.avatar?.url ?? '')}
+                    />
+                  ) : (
+                    <Avatar
+                      className="avatar"
+                      onMouseLeave={() => setIsHovered(!isHovered)}
+                      sx={{width: 100, height: 100}}
+                    >
+                      <AddAPhotoIcon fontSize="large" color="primary"/>
+                    </Avatar>
+                  )}
               </Box>
             </Box>
           </Grid>

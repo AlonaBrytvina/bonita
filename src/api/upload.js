@@ -1,11 +1,6 @@
 import { getGql } from '../utils/getGql';
-import { BACKEND_URL } from '../constants';
 
-export const setAvatar = ({avatarId, userId}) => {
-  const gql = getGql(`${BACKEND_URL}/graphql`);
-  console.log(avatarId, userId);
-
-  return gql(`
+export const setAvatar = ({avatarId, userId}) => getGql(`
       mutation setAvatar{
            UserUpsert(user:{_id: "${userId}", avatar: {_id: "${avatarId}"}}){
                 _id, nick, avatar{
@@ -14,17 +9,11 @@ export const setAvatar = ({avatarId, userId}) => {
            }
       }
      `);
-};
 
-export const uploadTracks = (id) => {
-  const gql = getGql(`${BACKEND_URL}/graphql`);
-  console.log(id);
-
-  return gql(`
+export const uploadTracks = (id) => getGql(`
       mutation uploadTrack{
           TrackUpsert(track: {_id: "${id}"}){
                 _id, url, originalFileName
            }
       }
-     `);
-};
+  `);

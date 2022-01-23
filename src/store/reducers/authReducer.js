@@ -30,32 +30,19 @@ export function authReducer(state = initialState, action) {
         ...state,
         errorMessage: action.payload,
       };
-    case types.FETCH_FIND_USER_BY_ID:
-      return {
-        ...state,
-      };
     case types.FETCH_FIND_USER_BY_ID_SUCCESS:
       return {
         ...state,
         user: action.payload,
       };
-    case types.FETCH_FIND_USER_BY_ID_FAIL:
-      return {
-        ...state,
-      };
     case types.SET_USER:
-      console.log(action.payload);
       return {
         ...state,
+        login: action.payload,
+        authToken: action.payload,
         user: action.payload,
       };
-    case types.SET_NICK:
-      console.log(action.payload);
-      return {
-        ...state,
-      };
     case types.SET_NICK_SUCCESS:
-      console.log(action.payload);
       return {
         ...state,
         user: action.payload,

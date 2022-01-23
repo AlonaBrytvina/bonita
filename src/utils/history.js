@@ -1,18 +1,6 @@
 import { history } from '../createHistory';
 
-export const forwardToMainPage = (location) => {
-  if (localStorage.getItem('authToken')) {
-    history.push(location);
-  }
-};
-
-export const forwardToUploadPage = (location) => {
-  if (localStorage.getItem('authToken')) {
-    history.push(location);
-  }
-};
-
-export const forwardToCreatePlaylistPage = (location) => {
+export const forwardToPage = (location) => {
   if (localStorage.getItem('authToken')) {
     history.push(location);
   }

@@ -7,7 +7,7 @@ import types, {
   actionFetchTracksSuccess,
 } from '../types/trackTypes';
 import {
-  getTracksCount, getTracksWithPage, getUserTracks,
+  getTracksCount, getTracksWithPage, getUserTracks, getUserTracksCount,
 } from '../../api/tracks';
 
 function* fetchTracksWorker(action) {
@@ -22,10 +22,13 @@ function* fetchTracksWorker(action) {
 }
 
 function* fetchUserTracksWorker(action) {
+  const page = action.payload;
   const userId = yield select(state => state?.auth?.user?._id);
-  const userTracks = yield call(getUserTracks, userId);
 
-  yield put(actionFetchUserTracksSuccess({userTracks, totalCount: userTracks.length}));
+  const userTracks = yield call(getUserTracks, {userId, page});
+  const userTracksCount = yield call(getUserTracksCount, userId);
+
+  yield put(actionFetchUserTracksSuccess({userTracks, totalCount: userTracksCount}));
 }
 
 export function* tracksSaga() {

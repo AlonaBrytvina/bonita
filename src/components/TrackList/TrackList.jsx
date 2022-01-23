@@ -25,7 +25,7 @@ export const TrackList = ({tracks, isLoading}) => {
   };
 
   return isLoading ? (
-    <CircularProgress/>
+    <CircularProgress size="large"/>
   ) : (
     <Box sx={{
       minHeight: '70vh',
