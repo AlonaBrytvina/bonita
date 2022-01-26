@@ -56,27 +56,34 @@ export const getPlaylistsCount = () => getGql(`
 });
 
 export const createPlaylist = (playlistName) => getGql(`
-      mutation createPlaylist{
-          PlaylistUpsert(playlist: {name: "${playlistName}"}){
-              _id
-          }
-      }
-  `);
+     mutation createPlaylist ($playlistName: String!){
+                PlaylistUpsert(playlist: {name: $playlistName}) {
+                    _id
+                }
+            }
+  `, {playlistName});
 
-export const addTracksToPlaylist = ({playlistId, arrayOfTracks}) => getGql(`
-      mutation createPlaylist{
-          PlaylistUpsert(playlist: {
-            _id: "${playlistId}"
-             tracks:{
-                 _id: "${arrayOfTracks._id}"
-             }
-          }){
-           _id tracks{
-              _id 
-           }
+export const addTracksToPlaylist = ({playlistId, arrayOfTracks}) => (getGql(`
+      mutation p($playlist:PlaylistInput){
+         PlaylistUpsert(playlist:$playlist){
+         _id name tracks{
+               _id originalFileName url
+            }
          }
       }
-`);
+`, {playlist: {_id: playlistId, tracks: arrayOfTracks}}));
+
+export const getUserPlaylistsCount = (userId) => getGql(`
+      query getCount($query: String){
+       PlaylistCount(query:$query)
+      } 
+  `, {
+  query: JSON.stringify([{
+    ___owner: userId,
+    name: {$exists: true, $ne: ''},
+    tracks: {$exists: true, $ne: []},
+  }]),
+});
 
 export const getUserPlaylist = ({userId, page = 1}) => getGql(`
       query findUserPlaylists($query: String){

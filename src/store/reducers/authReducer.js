@@ -38,8 +38,6 @@ export function authReducer(state = initialState, action) {
     case types.SET_USER:
       return {
         ...state,
-        login: action.payload,
-        authToken: action.payload,
         user: action.payload,
       };
     case types.SET_NICK_SUCCESS:

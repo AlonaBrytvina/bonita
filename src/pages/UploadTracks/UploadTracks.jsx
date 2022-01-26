@@ -1,45 +1,32 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Typography,
-  Box, Paper, Grid, Avatar, Alert, Snackbar,
+  Box, Paper, Grid, Avatar, Button,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { arrayMoveImmutable } from 'array-move';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
-import { SortableList } from '../../components/Dropzone/SortableList';
 import { Dropzone } from '../../components/Dropzone/Dropzone';
-import { actionSetUploadTrack } from '../../store/types/uploadTypes';
 import './UploadTracks.scss';
+import { actionSetUploadTrack } from '../../store/types/uploadTypes';
 
 export const UploadTracks = () => {
   const dispatch = useDispatch();
-  const upload = useSelector(state => state?.upload.tracks);
+  const [files, setFiles] = useState([]);
 
-  const [uploadTracks, setUploadTracks] = useState([]);
-  const [openSnackBar, setOpenSnackBar] = useState(false);
-
-  useEffect(() => {
-    if (upload?.length !== 0) {
-      setUploadTracks(prevState => [
-        ...prevState,
-        {...upload},
-      ]);
-    }
-  }, [upload]);
+  const addTrack = () => {
+    dispatch(actionSetUploadTrack(files));
+  };
 
   const onDrop = useCallback(acceptedFiles => {
-    dispatch(actionSetUploadTrack(acceptedFiles[0]));
+    setFiles(oldFiles => ([
+      ...oldFiles,
+      ...acceptedFiles,
+    ]));
   }, []);
 
   const onSortEnd = ({oldIndex, newIndex}) => {
-    setUploadTracks(arrayMoveImmutable(uploadTracks, oldIndex, newIndex));
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenSnackBar(false);
+    setFiles(arrayMoveImmutable(files, oldIndex, newIndex));
   };
 
   return (
@@ -65,29 +52,31 @@ export const UploadTracks = () => {
             <Typography
               variant="h4"
             >
-              Add track
+              Add tracks
             </Typography>
           </Grid>
         </Grid>
         <Box>
-          <Dropzone onDrop={onDrop}/>
-          <SortableList tracks={uploadTracks} onSortEnd={onSortEnd}/>
-          <Typography>If you want to add track drag and drop an audio file</Typography>
+          <Dropzone onSortEnd={onSortEnd} multiple onDrop={onDrop} files={files}/>
+          {files.length === 0
+            ? (
+              <Typography>If you want to add tracks drag and drop an audio file</Typography>
+            ) : (
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                sx={{
+                  margin: '20px 0',
+                }}
+                onClick={addTrack}
+                fullWidth
+              >
+                Upload tracks
+              </Button>
+            )}
         </Box>
       </Paper>
-      <Snackbar
-        open={openSnackBar}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-      >
-        <Alert
-          severity="success"
-          onClose={handleClose}
-        >
-          Success! Track was added!
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

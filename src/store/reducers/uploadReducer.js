@@ -25,6 +25,11 @@ export function uploadReducer(state = initialState, action) {
         ...state,
         tracks: action.payload,
       };
+    case types.UPSERT_USER_TRACKS_SUCCESS:
+      return {
+        ...state,
+        tracks: action.payload,
+      };
     default:
       return state;
   }

@@ -17,6 +17,8 @@ import { history } from '../../createHistory';
 import { ProfilePage } from '../../pages/ProfilePage/ProfilePage';
 import { UploadPlaylist } from '../../pages/UploadPlaylist/UploadPlaylist';
 import { UploadTracks } from '../../pages/UploadTracks/UploadTracks';
+import { ROUTES } from '../../constants';
+import { SnackBar } from '../SnackBar/SnackBar';
 
 export const App = () => (
   <ThemeProvider theme={theme}>
@@ -24,17 +26,19 @@ export const App = () => (
       <Router history={history}>
         <Header/>
         <Switch>
-          <PrivateRoute exact path="/" component={MainPage}/>
-          <PrivateRoute exact path="/playlists" component={PlaylistsPage}/>
-          <PrivateRoute exact path="/selectedPlaylist/:id" component={SelectedPlaylistPage}/>
-          <PrivateRoute exact path="/uploadPlaylist" component={UploadPlaylist}/>
-          <PrivateRoute exact path="/uploadTracks" component={UploadTracks}/>
-          <PrivateRoute exact path="/uploadPlaylist" component={UploadPlaylist}/>
-          <PrivateRoute exact path="/profile" component={ProfilePage}/>
-          <Route exact path="/login" component={LoginPage}/>
-          <Route exact path="/register" component={RegisterPage}/>
+          <PrivateRoute exact path={ROUTES.MAIN_PAGE} component={MainPage}/>
+          <PrivateRoute exact path={ROUTES.USER_MAIN_PAGE} component={MainPage}/>
+          <PrivateRoute exact path={ROUTES.PLAYLISTS_PAGE} component={PlaylistsPage}/>
+          <PrivateRoute exact path={ROUTES.USER_PLAYLISTS_PAGE} component={PlaylistsPage}/>
+          <PrivateRoute exact path={ROUTES.SELECTED_PLAYLIST_PAGE} component={SelectedPlaylistPage}/>
+          <PrivateRoute exact path={ROUTES.UPLOAD_PLAYLIST_PAGE} component={UploadPlaylist}/>
+          <PrivateRoute exact path={ROUTES.UPLOAD_TRACKS_PAGE} component={UploadTracks}/>
+          <PrivateRoute exact path={ROUTES.PROFILE_PAGE} component={ProfilePage}/>
+          <Route exact path={ROUTES.LOGIN_PAGE} component={LoginPage}/>
+          <Route exact path={ROUTES.REGISTER_PAGE} component={RegisterPage}/>
         </Switch>
         <Player/>
+        <SnackBar/>
       </Router>
     </Provider>
   </ThemeProvider>

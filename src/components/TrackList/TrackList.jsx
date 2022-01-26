@@ -1,11 +1,13 @@
 import React from 'react';
 import {
   IconButton, List, ListItem, Typography,
-  Box, CircularProgress,
+  Box,
 } from '@mui/material';
 import { PauseRounded, PlayArrowRounded } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionPause, actionPlay } from '../../store/types/playerTypes';
+import { SkeletonProduct } from '../Skeleton/SkeletonProduct';
+import { regex } from '../../utils/regex';
 
 export const TrackList = ({tracks, isLoading}) => {
   const dispatch = useDispatch();
@@ -24,25 +26,27 @@ export const TrackList = ({tracks, isLoading}) => {
     }
   };
 
-  return isLoading ? (
-    <CircularProgress size="large"/>
-  ) : (
+  return (
     <Box sx={{
       minHeight: '70vh',
     }}
     >
-      <List>
-        {tracks.map(track => (
-          <ListItem key={track._id}>
-            <IconButton onClick={() => togglePlayPause(track._id)}>
-              { playerState.isPlaying && track._id === playerState.currentPlayingTrackId
-                ? <PauseRounded fontSize="large" color="primary"/>
-                : <PlayArrowRounded fontSize="large" color="primary"/>}
-            </IconButton>
-            <Typography>{track?.originalFileName}</Typography>
-          </ListItem>
-        ))}
-      </List>
+      {isLoading ? (
+        <SkeletonProduct />
+      ) : (
+        <List>
+          {tracks.map(track => (
+            <ListItem key={track._id}>
+              <IconButton onClick={() => togglePlayPause(track._id)}>
+                {playerState.isPlaying && track._id === playerState.currentPlayingTrackId
+                  ? <PauseRounded fontSize="large" color="primary"/>
+                  : <PlayArrowRounded fontSize="large" color="primary"/>}
+              </IconButton>
+              <Typography>{regex(track?.originalFileName)}</Typography>
+            </ListItem>
+          ))}
+        </List>
+      )}
     </Box>
   );
 };

@@ -11,7 +11,6 @@ export const PlayerBar = () => {
   const dispatch = useDispatch();
 
   const onChange = e => {
-    console.log(e);
     dispatch(actionChangeTime(e.target.value));
   };
 
@@ -58,6 +57,7 @@ export const PlayerBar = () => {
         step={1}
         value={position}
         onChange={onChange}
+        sx={{padding: '0'}}
         max={
           playerState.audio?.duration === undefined ? 0
             : Number.isNaN(playerState.audio?.duration)
@@ -70,7 +70,6 @@ export const PlayerBar = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          mt: -2,
         }}
       >
         <TinyText>{formatDuration(playerState.audio?.currentTime)}</TinyText>

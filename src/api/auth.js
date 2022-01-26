@@ -34,7 +34,7 @@ export const registration = (payload) => {
   );
 };
 
-export const findUserById = (_id) => getGql(`
+export const findUserById = (_id) => (getGql(`
     query findUserById($id: String){
        UserFindOne(query: $id) {
            _id, login, nick, createdAt, avatar {
@@ -44,7 +44,8 @@ export const findUserById = (_id) => getGql(`
     }
      `, {
   id: JSON.stringify([{_id}]),
-});
+})
+);
 
 export const setNick = ({id, nick}) => getGql(`
       mutation setNick{

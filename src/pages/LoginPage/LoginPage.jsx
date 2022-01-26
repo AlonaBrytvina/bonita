@@ -1,32 +1,29 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   Avatar, Box,
   Button,
   FormControl,
   Grid,
   IconButton, Input,
   InputAdornment, InputLabel,
-  Paper, Snackbar,
+  Paper,
   Typography,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import './LoginPage.scss';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { actionLogin } from '../../store/types/authTypes';
+import { ROUTES } from '../../constants';
 
 export const LoginPage = () => {
   const dispatch = useDispatch();
-  const authToken = useSelector(state => state.auth.authToken);
 
   const [login, setLogin] = useState(null);
   const [password, setPassword] = useState(null);
-
   const [visiblePsw, setVisiblePsw] = useState(false);
-  const [openSnackBar, setOpenSnackBar] = useState(false);
 
   const [loginDirty, setLoginDirty] = useState(false);
   const [pswDirty, setPswDirty] = useState(false);
@@ -44,16 +41,6 @@ export const LoginPage = () => {
 
   const signIn = () => {
     dispatch(actionLogin({login, password}));
-    if (authToken !== null) {
-      setOpenSnackBar(true);
-    }
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenSnackBar(false);
   };
 
   return (
@@ -110,7 +97,7 @@ export const LoginPage = () => {
                     : (<VisibilityOffIcon/>)}
                 </IconButton>
               </InputAdornment>
-          )}
+            )}
             fullWidth
             required
           />
@@ -129,29 +116,15 @@ export const LoginPage = () => {
           Sign in
         </Button>
         <Typography>
-          {/* eslint-disable-next-line react/no-unescaped-entities */}
           Don't you have an account?
           <Link
-            to="/register"
+            to={ROUTES.REGISTER_PAGE}
           >
             <Button>
               Sign up
             </Button>
           </Link>
         </Typography>
-        <Snackbar
-          open={openSnackBar}
-          autoHideDuration={2000}
-          onClose={handleClose}
-          anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-        >
-          <Alert
-            severity="success"
-            onClose={handleClose}
-          >
-            Success sign in!
-          </Alert>
-        </Snackbar>
       </Paper>
     </Box>
   );

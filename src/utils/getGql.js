@@ -1,4 +1,3 @@
-import { BACKEND_URL } from '../constants';
 import { buildUrl } from './buildUrl';
 
 export const getGql = (query, variables = {}) => fetch(buildUrl('graphql'), {

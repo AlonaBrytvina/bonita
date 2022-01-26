@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   Avatar, Box,
   Button,
   FormControl,
   Grid,
   IconButton, Input,
   InputAdornment, InputLabel,
-  Paper, Snackbar,
+  Paper,
   Typography,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { actionRegister } from '../../store/types/authTypes';
 
@@ -36,7 +35,6 @@ export const RegisterPage = () => {
 
   const dispatch = useDispatch();
   const auth = useSelector(state => state.auth);
-  const history = useHistory();
 
   const onChangeName = (e) => {
     setLogin(e.target.value);
@@ -54,18 +52,10 @@ export const RegisterPage = () => {
     if (password === confirmPsw) {
       dispatch(actionRegister({login, password}));
 
-      if (auth.login.length !== 0 && localStorage.getItem('authToken') !== null) {
+      if (auth.login.length !== 0 && auth.authToken?.length !== 0) {
         setOpenSnackBar(!openSnackBar);
       }
     }
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenSnackBar(false);
-    history.push('/');
   };
 
   return (
@@ -182,19 +172,6 @@ export const RegisterPage = () => {
           </Button>
         </Link>
       </Typography>
-      <Snackbar
-        open={openSnackBar}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-      >
-        <Alert
-          severity="success"
-          onClose={handleClose}
-        >
-          Success registration and log in!
-        </Alert>
-      </Snackbar>
     </Paper>
   );
 };

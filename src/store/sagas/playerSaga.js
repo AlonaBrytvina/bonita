@@ -1,7 +1,8 @@
 import {
-  call, put, takeLatest, select,
+  put, takeLatest, select,
 } from 'redux-saga/effects';
-import types, { actionPause, actionPlay, actionSetPlayerState } from '../types/playerTypes';
+import types, { actionPlay, actionSetPlayerState } from '../types/playerTypes';
+import store from '../store';
 
 function* playWorker(action) {
   const {trackList, id} = action.payload;
@@ -11,6 +12,9 @@ function* playWorker(action) {
   if (id !== state.currentPlayingTrackId) {
     if (state.audio !== null) {
       state.audio.pause();
+      yield put(actionSetPlayerState({
+        duration: 0,
+      }));
     }
   } else {
     state.audio.play();
@@ -21,6 +25,10 @@ function* playWorker(action) {
   }
 
   const audio = new Audio(url);
+  audio.addEventListener('durationchange', (e) => {
+    store.dispatch(actionSetPlayerState({duration: e.target.duration}));
+  });
+
   audio.play();
 
   yield put(actionSetPlayerState({

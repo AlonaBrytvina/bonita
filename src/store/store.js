@@ -1,5 +1,5 @@
 import {
-  combineReducers, createStore, compose, applyMiddleware,
+  combineReducers, createStore, applyMiddleware, compose,
 } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { all } from 'redux-saga/effects';
@@ -14,6 +14,7 @@ import { playlistsSaga } from './sagas/playlistsSaga';
 import { uploadSaga } from './sagas/uploadSaga';
 import { uploadReducer } from './reducers/uploadReducer';
 import { loadState, saveState, stateToStorageSelector } from '../helpers';
+import { snackBarReducer } from './reducers/snackBarReducer';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   playlists: playlistsReducer,
   upload: uploadReducer,
+  snackBar: snackBarReducer,
 });
 
 function* rootSaga() {
@@ -35,13 +37,15 @@ function* rootSaga() {
   ]);
 }
 
+const middleware = [
+  applyMiddleware(sagaMiddleware),
+  ...(window.__REDUX_DEVTOOLS_EXTENSION__ ? [window.__REDUX_DEVTOOLS_EXTENSION__()] : []),
+];
+
 const store = createStore(
   rootReducer,
   loadState(),
-  compose(
-    applyMiddleware(sagaMiddleware),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-  ),
+  compose(...middleware),
 );
 
 store.subscribe(() => {

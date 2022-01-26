@@ -10,10 +10,10 @@ import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { ReactComponent as Vector } from '../../assets/svgs/Vector.svg';
 import { buildUrl } from '../../utils/buildUrl';
+import { ROUTES } from '../../constants';
 
 export const Header = () => {
   const user = useSelector(state => state.auth.user);
-  console.log(user);
 
   return (
     <AppBar position="static">
@@ -28,13 +28,13 @@ export const Header = () => {
           alignItems: 'center',
         }}
         >
-          <Link to="/">
+          <Link to={ROUTES.MAIN_PAGE}>
             <Button variant="secondary">
               <AudiotrackIcon/>
               <Typography variant="button" >Tracks</Typography>
             </Button>
           </Link>
-          <Link to="/playlists">
+          <Link to={ROUTES.PLAYLISTS_PAGE}>
             <Button variant="secondary">
               <FormatListBulletedIcon/>
               <Typography variant="button" marginLeft="5px">Playlists</Typography>
@@ -42,7 +42,7 @@ export const Header = () => {
           </Link>
         </Box>
         <Link
-          to={user !== null ? '/profile' : '/login'}
+          to={user !== null ? ROUTES.PROFILE_PAGE : ROUTES.LOGIN_PAGE}
         >
           <IconButton
             size="large"

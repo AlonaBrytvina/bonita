@@ -13,7 +13,11 @@ export const getTracksWithPage = (page = 1) => getGql(`
             _id url originalFileName
         }
       }
-  `, {query: JSON.stringify([{}, {skip: [(page - 1) * 100]}])})
+  `, {
+  query: JSON.stringify([
+    {originalFileName: {$exists: true, $ne: ''}},
+    {skip: [(page - 1) * 100]}]),
+})
   .then(data => data.map(track => ({
     ...track,
     url: `${BACKEND_URL}/${track.url}`,

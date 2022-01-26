@@ -1,11 +1,7 @@
 import React from 'react';
 
 export const saveState = state => {
-  try {
-    localStorage.setItem('state', JSON.stringify(state));
-  } catch (error) {
-    console.error('Can\'t save state to localStorage!');
-  }
+  localStorage.setItem('state', JSON.stringify(state));
 };
 
 export const stateToStorageSelector = state => ({

@@ -1,39 +1,42 @@
 import {
+  all,
   call, put, select, takeLatest,
 } from 'redux-saga/effects';
 import types, {
-  actionSetUploadTrackSuccess,
 } from '../types/uploadTypes';
 import { getGqlForUpload } from '../../utils/getGqlForUpload';
 import { jwtDecode } from '../../utils/jwtDecode';
-import { setAvatar } from '../../api/upload';
+import { setAvatar, uploadTracks } from '../../api/upload';
 import { actionSetUser } from '../types/authTypes';
+import { actionSetSnackBar } from '../types/snackBarTypes';
+import { ALERT_TYPES } from '../reducers/snackBarReducer';
+import { forwardToPage } from '../../utils/history';
+import { ROUTES } from '../../constants';
 
 function* uploadFileWorker(action) {
   const auth = yield select(state => state.auth.authToken);
 
-  try {
-    const response = yield call(getGqlForUpload, {data: action.payload, formName: 'photo', fetchPart: 'upload'});
-    const avatarId = response._id;
+  const response = yield call(getGqlForUpload, {data: action.payload, formName: 'photo', fetchPart: 'upload'});
+  const avatarId = response._id;
 
-    const token = yield call(jwtDecode, auth);
-    const userId = token.sub.id;
+  const token = yield call(jwtDecode, auth);
+  const userId = token.sub.id;
+  const result = yield call(setAvatar, {userId, avatarId});
 
-    const result = yield call(setAvatar, {userId, avatarId});
-    console.log(result);
-    yield put(actionSetUser(result));
-  } catch (e) {
-    e.message;
-  }
+  yield put(actionSetUser(result));
 }
 
 function* uploadTrackWorker(action) {
-  try {
-    const response = yield call(getGqlForUpload, {data: action.payload, formName: 'track', fetchPart: 'track'});
+  const tracks = yield all(action.payload.map(file => {
+    const formData = new FormData();
+    formData.append('track', file);
+    return call(getGqlForUpload, {formData, fetchPart: 'track'});
+  }));
 
-    yield put(actionSetUploadTrackSuccess({...response, originalFileName: action.payload.name}));
-  } catch (e) {
-    e.message;
+  const getTracks = yield all(tracks.map(track => call(uploadTracks, track._id)));
+  if (getTracks.length !== 0) {
+    yield call(forwardToPage, ROUTES.MAIN_PAGE);
+    yield put(actionSetSnackBar({type: ALERT_TYPES.SUCCESS, message: 'Success!'}));
   }
 }
 

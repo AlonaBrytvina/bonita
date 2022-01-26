@@ -1,51 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
-  Box, IconButton, Slider, Stack, Typography,
+  Box, CircularProgress, IconButton, Typography,
 } from '@mui/material';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-import {
-  FastForwardRounded, FastRewindRounded, PauseRounded, PlayArrowRounded, VolumeDown, VolumeUp,
-} from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  FastForwardRounded,
+  FastRewindRounded,
+  PauseRounded,
+  PlayArrowRounded,
+} from '@mui/icons-material';
 import { PlayerBar } from '../PlayerBar/PlayerBar';
+import { regex } from '../../utils/regex';
 import {
   actionNextTrack,
-  actionPause, actionPlay, actionPreviousTrack,
+  actionPause,
+  actionPlay,
+  actionPreviousTrack,
 } from '../../store/types/playerTypes';
-
-const DEFAULT_VOLUME = 1;
+import { VolumeControl } from '../VolumeControl/VolumeControl';
 
 export const Player = () => {
-  const playerState = useSelector(state => state.player);
   const dispatch = useDispatch();
-
-  const [volume, setVolume] = useState(DEFAULT_VOLUME);
-
-  const trackIndex = playerState.trackList.findIndex(track => track._id === playerState.currentPlayingTrackId);
-
-  const onVolumeChange = (e) => {
-    const volume = e.target.value / 100;
-    setVolume(volume);
-    playerState.audio.volume = volume;
-  };
-
-  const onMuted = () => {
-    if (volume === 0) {
-      playerState.audio.volume = DEFAULT_VOLUME;
-      setVolume(DEFAULT_VOLUME);
-    } else {
-      playerState.audio.volume = 0;
-      setVolume(playerState.audio.volume);
-    }
-  };
-
-  const onBackward = () => {
-    dispatch(actionPreviousTrack());
-  };
-
-  const onForward = () => {
-    dispatch(actionNextTrack());
-  };
+  const playerState = useSelector(state => state.player);
 
   const togglePlayPause = () => {
     const {trackList, currentPlayingTrackId} = playerState;
@@ -57,6 +33,14 @@ export const Player = () => {
     }
   };
 
+  const onBackward = () => {
+    dispatch(actionPreviousTrack());
+  };
+
+  const onForward = () => {
+    dispatch(actionNextTrack());
+  };
+
   useEffect(() => {
     playerState.audio?.addEventListener('ended', onForward);
 
@@ -65,9 +49,7 @@ export const Player = () => {
     };
   }, [playerState.audio]);
 
-  useEffect(() => {
-    setVolume(DEFAULT_VOLUME);
-  }, [playerState.currentPlayingTrackId]);
+  const trackIndex = playerState.trackList.findIndex(track => track._id === playerState.currentPlayingTrackId);
 
   return (
     <Box sx={{
@@ -83,13 +65,10 @@ export const Player = () => {
     >
       <PlayerBar/>
       <Typography variant="caption">
-        {playerState.trackList?.[trackIndex]?.originalFileName ?? ''}
+        {regex(playerState.trackList?.[trackIndex]?.originalFileName ?? '')}
       </Typography>
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'row',
           marginTop: '10px',
         }}
       >
@@ -103,9 +82,11 @@ export const Player = () => {
           onClick={togglePlayPause}
           color="primary"
         >
-          {!playerState.isPlaying
-            ? (<PlayArrowRounded fontSize="large"/>)
-            : (<PauseRounded fontSize="large"/>)}
+          {playerState.duration === 0
+            ? <CircularProgress/>
+            : playerState.isPlaying
+              ? <PauseRounded fontSize="large"/>
+              : <PlayArrowRounded fontSize="large"/>}
         </IconButton>
         <IconButton
           color="primary"
@@ -116,31 +97,7 @@ export const Player = () => {
           />
         </IconButton>
       </Box>
-      <Stack
-        spacing={2}
-        direction="row"
-        alignItems="center"
-        minWidth="20%"
-        sx={
-          {ml: 2, width: 200}
-        }
-      >
-        <IconButton onClick={onMuted}>
-          {volume === 0
-            ? (<VolumeOffIcon fontSize="large"/>)
-            : volume >= 0.01 && volume <= 0.5
-              ? (<VolumeDown fontSize="large"/>)
-              : volume === 0
-                ? (<VolumeOffIcon fontSize="large"/>)
-                : (<VolumeUp fontSize="large"/>)}
-        </IconButton>
-        <Slider
-          arial-label="Volume"
-          max={100}
-          value={volume * 100}
-          onChange={onVolumeChange}
-        />
-      </Stack>
+      <VolumeControl />
     </Box>
   );
 };

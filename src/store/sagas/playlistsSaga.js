@@ -1,18 +1,29 @@
 import {
+  all,
   call, put, select, takeLatest,
 } from 'redux-saga/effects';
 
 import {
-  getSelectedPlaylist, getPlaylistsWithPage, getPlaylistsCount, createPlaylist, addTracksToPlaylist, getUserPlaylist,
+  getSelectedPlaylist,
+  getPlaylistsWithPage,
+  getPlaylistsCount,
+  createPlaylist,
+  addTracksToPlaylist,
+  getUserPlaylist,
+  getUserPlaylistsCount,
 } from '../../api/playlists';
 import types, {
   actionFetchOnePlaylistSuccess,
   actionFetchPlaylistsFail,
   actionFetchPlaylistsSuccess,
-  actionFetchOnePlaylistFail, actionCreatePlaylistByIdSuccess, actionFetchUserPlaylistsSuccess,
+  actionFetchOnePlaylistFail, actionFetchUserPlaylistsSuccess,
 } from '../types/playlistTypes';
-import { getUserTracks } from '../../api/tracks';
-import { actionFetchUserTracksSuccess } from '../types/trackTypes';
+import { getGqlForUpload } from '../../utils/getGqlForUpload';
+import { uploadTracks } from '../../api/upload';
+import { actionSetSnackBar } from '../types/snackBarTypes';
+import { ALERT_TYPES } from '../reducers/snackBarReducer';
+import { forwardToPage } from '../../utils/history';
+import { ROUTES } from '../../constants';
 
 function* getAllPlaylists(action) {
   try {
@@ -35,31 +46,42 @@ function* getOnePlaylist(action) {
 }
 
 function* createUserPlaylistWorker(action) {
-  console.log(action.payload);
-  const {playlistName} = action.payload;
-  const uploadTracks = yield select(state => state.upload.tracks);
+  const {playlistName, files} = action.payload;
+  const arrayId = [];
 
-  try {
-    const playlistId = yield call(createPlaylist, playlistName);
+  const playlistId = yield call(createPlaylist, playlistName);
 
-    console.log(playlistId._id, action.payload.uploadTracks);
-    const getPlaylist = yield call(addTracksToPlaylist, {playlistId: playlistId._id, arrayOfTracks: uploadTracks});
-    console.log(getPlaylist);
+  const tracks = yield all(files.map(file => {
+    const formData = new FormData();
+    formData.append('track', file);
+    return call(getGqlForUpload, {formData, fetchPart: 'track'});
+  }));
 
-    const userPlaylist = yield call(getSelectedPlaylist, playlistId._id);
-    yield put(actionCreatePlaylistByIdSuccess(userPlaylist));
-    console.log(userPlaylist);
-  } catch (e) {
-    e.message;
+  const allTracks = yield all(tracks.map(track => call(uploadTracks, track._id)));
+
+  allTracks.map(track => arrayId.push({ _id: track._id }));
+
+  const getPlaylistWithTracks = yield call(addTracksToPlaylist, {
+    playlistId: playlistId._id,
+    arrayOfTracks: arrayId,
+  });
+
+  if (Object.keys(getPlaylistWithTracks).length !== 0) {
+    yield put(actionSetSnackBar({type: ALERT_TYPES.SUCCESS, message: 'Success!'}));
+    yield call(forwardToPage, ROUTES.PLAYLISTS_PAGE);
   }
 }
 
 function* fetchUserPlaylistsWorker(action) {
   const page = action.payload;
   const userId = yield select(state => state?.auth?.user?._id);
-  const userPlaylists = yield call(getUserPlaylist, {userId, page});
 
-  yield put(actionFetchUserPlaylistsSuccess({userPlaylists, totalCount: userPlaylists.length}));
+  const playlistsCount = yield call(getUserPlaylistsCount, userId);
+
+  if (userId.length !== 0) {
+    const userPlaylists = yield call(getUserPlaylist, {userId, page});
+    yield put(actionFetchUserPlaylistsSuccess({userPlaylists, totalCount: playlistsCount}));
+  }
 }
 
 export function* playlistsSaga() {

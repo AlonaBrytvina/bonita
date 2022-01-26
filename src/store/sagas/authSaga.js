@@ -1,5 +1,5 @@
 import {
-  call, put, takeLatest, select,
+  call, put, takeLatest, select, all,
 } from 'redux-saga/effects';
 import types, {
   actionLoginSuccess,
@@ -15,9 +15,11 @@ import {
 } from '../../api/auth';
 import { forwardToPage } from '../../utils/history';
 import { jwtDecode } from '../../utils/jwtDecode';
+import { actionSetSnackBar } from '../types/snackBarTypes';
+import { ALERT_TYPES } from '../reducers/snackBarReducer';
+import { ROUTES } from '../../constants';
 
 function* loginWorker(action) {
-  // const auth = yield select(state => state.auth.authToken);
   try {
     localStorage.removeItem('authToken');
     const authToken = yield call(login, action.payload);
@@ -32,7 +34,11 @@ function* loginWorker(action) {
     yield put(actionFindUserByIdSuccess(user));
     yield put(actionSetUser(user));
 
-    yield call(forwardToPage, '/');
+    yield call(forwardToPage, ROUTES.MAIN_PAGE);
+
+    if (user._id.length !== 0) {
+      yield put(actionSetSnackBar({type: ALERT_TYPES.SUCCESS, message: 'Success!'}));
+    }
   } catch (e) {
     yield put(actionLoginFail(e.message));
   }
@@ -43,8 +49,9 @@ function* registerWorker(action) {
     localStorage.removeItem('authToken');
     const userData = yield call(registration, action.payload);
     yield put(actionRegisterSuccess({authToken: null, login: userData.login}));
+
     if (userData._id.length !== 0) {
-      yield put(actionLogin({login: action.payload.login, password: action.payload.password}));
+      yield put(actionLogin({login: userData.login, password: action.payload.password}));
     }
   } catch (e) {
     yield put(actionRegisterFail(e.message));

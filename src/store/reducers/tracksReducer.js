@@ -1,5 +1,4 @@
 import types from '../types/trackTypes';
-import { BACKEND_URL } from '../../constants';
 
 const initialState = {
   trackList: [],
@@ -20,10 +19,6 @@ export function tracksReducer(state = initialState, action) {
         trackList: action.payload.trackList,
         totalCount: action.payload.totalCount,
         isLoading: false,
-      };
-    case types.FETCH_USER_TRACKS:
-      return {
-        ...state,
       };
     case types.FETCH_USER_TRACKS_SUCCESS:
       return {

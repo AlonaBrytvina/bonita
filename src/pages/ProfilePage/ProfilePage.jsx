@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Avatar, Box, Button, Grid, Input, InputAdornment, Paper, Typography,
+  Avatar, Box, Button, Grid, Input, InputAdornment, InputLabel, Paper, Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,7 +13,7 @@ import {
 import { history } from '../../createHistory';
 import { jwtDecode } from '../../utils/jwtDecode';
 import { actionSetUploadFile } from '../../store/types/uploadTypes';
-import './ProfilePage.scss';
+
 import { buildUrl } from '../../utils/buildUrl';
 
 export const ProfilePage = () => {
@@ -27,13 +27,13 @@ export const ProfilePage = () => {
     dispatch(actionSetUploadFile(acceptedFiles[0]));
   }, []);
 
-  const {getRootProps, getInputProps} = useDropzone({onDrop});
+  const {getRootProps, getInputProps} = useDropzone({onDrop, accept: 'image/*'});
 
   useEffect(() => {
-    // findUser();
     if (user === null && localStorage.getItem('authToken') !== null) {
       const token = jwtDecode(localStorage.getItem('authToken'));
       const {id} = token.sub;
+
       if (id.length !== 0) {
         dispatch(actionFindUserById(id));
       }
@@ -56,7 +56,6 @@ export const ProfilePage = () => {
 
   const closeAndGetChangedNick = () => {
     setOpenNick(!openNick);
-    console.log(currentNick, user);
     dispatch(actionSetNick(currentNick));
   };
   return (
@@ -66,7 +65,7 @@ export const ProfilePage = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        flexDirection: 'column',
+        textAlign: 'center',
         height: '65vh',
       }}
     >
@@ -74,111 +73,128 @@ export const ProfilePage = () => {
         elevation={10}
         sx={{
           height: '100%',
-          width: '80vh',
+          width: '70vh',
         }}
       >
         <Grid
           direction="column"
           alignItems="center"
-          justifyContent="center"
+          justifyContent="space-around"
           sx={{
             height: '100%',
           }}
           container
         >
-          <Grid
-            sx={{mb: '10px'}}
-            item
-          >
-            <Typography variant="subtitle2">
-              Profile
-            </Typography>
-          </Grid>
-          <Grid item position="relative">
-            <Box {...getRootProps()} >
-              <input {...getInputProps()} />
-              <Box position="absolute" zIndex={isHovered ? '1' : '0'}>
-                <Avatar
-                  className="avatar"
-                  onMouseLeave={() => setIsHovered(!isHovered)}
-                  sx={{width: 100, height: 100}}
-                >
-                  <AddAPhotoIcon fontSize="large" color="primary"/>
-                </Avatar>
-              </Box>
-              <Box>
-                {user?.avatar?.url !== null
-                  ? (
-                    <Avatar
-                      className="avatar"
-                      onMouseEnter={() => {
-                        setIsHovered(!isHovered);
-                      }}
-                      sx={{width: 100, height: 100}}
-                      src={buildUrl(user?.avatar?.url ?? '')}
-                    />
-                  ) : (
-                    <Avatar
-                      className="avatar"
-                      onMouseLeave={() => setIsHovered(!isHovered)}
-                      sx={{width: 100, height: 100}}
-                    >
-                      <AddAPhotoIcon fontSize="large" color="primary"/>
-                    </Avatar>
-                  )}
-              </Box>
-            </Box>
-          </Grid>
-          <Grid
-            onMouseLeave={() => setOpenNick(!openNick)}
-            sx={{m: '20px'}}
-            item
-          >
-            {openNick
-              ? (
-                <Input
-                  sx={{
-                    mr: '5px',
-                  }}
-                  value={currentNick}
-                  onChange={onChangeNick}
-                  endAdornment={(
-                    <InputAdornment position="end">
-                      <CheckBoxIcon
-                        onClick={closeAndGetChangedNick}
-                        cursor="pointer"
-                        color="primary"
-                        fontSize="medium"
+          <Grid item>
+            <Grid
+              sx={{mb: '10px'}}
+              item
+            >
+              <Typography variant="h5">
+                Profile
+              </Typography>
+            </Grid>
+            <Grid item position="relative" sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Box sx={{cursor: 'pointer', margin: '30px 0'}} {...getRootProps()} >
+                <input {...getInputProps()} />
+                <Box position="absolute" zIndex={isHovered ? '1' : '0'}>
+                  <Avatar
+                    onMouseLeave={() => setIsHovered(!isHovered)}
+                    sx={{
+                      width: 100, height: 100, backgroundColor: 'rgba(0,0,0,0.5)',
+                    }}
+                  >
+                    <AddAPhotoIcon fontSize="large"/>
+                  </Avatar>
+                </Box>
+                <Box>
+                  {user?.avatar?.url !== null
+                    ? (
+                      <Avatar
+                        className="avatar"
+                        onMouseEnter={() => {
+                          setIsHovered(!isHovered);
+                        }}
+                        sx={{width: 100, height: 100, backgroundColor: '#9c27b0'}}
+                        src={buildUrl(user?.avatar?.url ?? '')}
                       />
-                    </InputAdornment>
-                  )}
-                />
-              )
-              : (
-                <Grid
-                  sx={{
-                    mb: '10px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                  }}
-                  item
-                >
-                  <Typography
-                    variant="subtitle1"
+                    ) : (
+                      <Avatar
+                        onMouseLeave={() => setIsHovered(!isHovered)}
+                        sx={{width: 100, height: 100, backgroundColor: '#9c27b0'}}
+                      >
+                        <AddAPhotoIcon fontSize="large" color="primary"/>
+                      </Avatar>
+                    )}
+                </Box>
+              </Box>
+            </Grid>
+            <Grid
+              sx={{m: '20px'}}
+              item
+            >
+              {openNick
+                ? (
+                  <Input
                     sx={{
                       mr: '5px',
                     }}
-                  >
-                    {user?.nick}
-                  </Typography>
-                  <EditIcon
-                    fontSize="medium"
-                    color="primary"
-                    cursor="pointer"
-                    onClick={() => setOpenNick(!openNick)}
+                    value={currentNick}
+                    onChange={onChangeNick}
+                    endAdornment={(
+                      <InputAdornment position="end">
+                        <CheckBoxIcon
+                          onClick={closeAndGetChangedNick}
+                          cursor="pointer"
+                          color="primary"
+                          fontSize="medium"
+                        />
+                      </InputAdornment>
+                    )}
                   />
-                </Grid>
-              )}
+                )
+                : (
+                  <Grid
+                    sx={{
+                      mb: '10px',
+                      display: 'flex',
+                      flexDirection: 'row',
+                    }}
+                    item
+                  >
+                    {user.nick === null || user?.nick?.length === 0
+                      ? (
+                        <Box sx={{display: 'flex'}}>
+                          <InputLabel>Enter nick</InputLabel>
+                          <EditIcon
+                            fontSize="medium"
+                            color="primary"
+                            cursor="pointer"
+                            onClick={() => setOpenNick(!openNick)}
+                          />
+                        </Box>
+                      ) : (
+                        <Box sx={{display: 'flex'}}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{
+                              mr: '5px',
+                            }}
+                          >
+                            {user?.nick}
+                          </Typography>
+                          <EditIcon
+                            fontSize="medium"
+                            color="primary"
+                            cursor="pointer"
+                            onClick={() => setOpenNick(!openNick)}
+                          />
+                        </Box>
+
+                      )}
+                  </Grid>
+                )}
+            </Grid>
           </Grid>
           <Grid
             sx={{mt: '10px'}}
