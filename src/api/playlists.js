@@ -1,5 +1,5 @@
 import { getGql } from '../utils/getGql';
-import { BACKEND_URL } from '../constants';
+import { BACKEND_URL, LIMIT } from '../constants';
 
 export const getPlaylists = () => getGql(`query nonEmptyPlaylists($query: String){
   PlaylistFind(query: $query) {
@@ -38,8 +38,8 @@ export const getPlaylistsWithPage = (page = 1) => getGql(`
     tracks: {$exists: true, $ne: []},
   },
   {
-    limit: [20],
-    skip: [(page - 1) * 20],
+    limit: [LIMIT.PLAYLISTS_ON_PAGE],
+    skip: [(page - 1) * LIMIT.PLAYLISTS_ON_PAGE],
   }])
   ,
 });
@@ -99,8 +99,8 @@ export const getUserPlaylist = ({userId, page = 1}) => getGql(`
       tracks: {$exists: true, $ne: []},
     },
     {
-      limit: [20],
-      skip: [(page - 1) * 20],
+      limit: [LIMIT.PLAYLISTS_ON_PAGE],
+      skip: [(page - 1) * LIMIT.PLAYLISTS_ON_PAGE],
     },
   ]),
 });

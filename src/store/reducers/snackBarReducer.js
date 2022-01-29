@@ -1,12 +1,5 @@
 import types from '../types/snackBarTypes';
 
-export const ALERT_TYPES = {
-  SUCCESS: 'success',
-  ERROR: 'error',
-  WARNING: 'warning',
-  INFO: 'info',
-};
-
 const initialState = {
   isOpen: false,
   type: '',

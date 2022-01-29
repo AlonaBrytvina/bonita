@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Slider, styled, Typography,
+  Box, IconButton, Slider, styled, Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import CloseIcon from '@mui/icons-material/Close';
 import { actionChangeTime } from '../../store/types/playerTypes';
 
 export const PlayerBar = () => {
@@ -65,16 +66,19 @@ export const PlayerBar = () => {
               : Math.floor(playerState.audio?.duration)
         }
       />
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: ' row',
+        width: '100%',
+      }}
       >
-        <TinyText>{formatDuration(playerState.audio?.currentTime)}</TinyText>
         <TinyText>
-          -
+          {formatDuration(playerState.audio?.currentTime)}
+        </TinyText>
+          &nbsp;/&nbsp;
+        <TinyText>
           {formatDuration(playerState.audio?.duration)}
         </TinyText>
       </Box>

@@ -9,14 +9,16 @@ import { jwtDecode } from '../../utils/jwtDecode';
 import { setAvatar, uploadTracks } from '../../api/upload';
 import { actionSetUser } from '../types/authTypes';
 import { actionSetSnackBar } from '../types/snackBarTypes';
-import { ALERT_TYPES } from '../reducers/snackBarReducer';
 import { forwardToPage } from '../../utils/history';
-import { ROUTES } from '../../constants';
+import { ROUTES, ALERT_TYPES } from '../../constants';
 
 function* uploadFileWorker(action) {
   const auth = yield select(state => state.auth.authToken);
 
-  const response = yield call(getGqlForUpload, {data: action.payload, formName: 'photo', fetchPart: 'upload'});
+  const formData = new FormData();
+  formData.append('photo', action.payload);
+
+  const response = yield call(getGqlForUpload, {formData, fetchPart: 'upload'});
   const avatarId = response._id;
 
   const token = yield call(jwtDecode, auth);

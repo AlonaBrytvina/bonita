@@ -16,28 +16,30 @@ import {
 import { forwardToPage } from '../../utils/history';
 import { jwtDecode } from '../../utils/jwtDecode';
 import { actionSetSnackBar } from '../types/snackBarTypes';
-import { ALERT_TYPES } from '../reducers/snackBarReducer';
-import { ROUTES } from '../../constants';
+import { ROUTES, ALERT_TYPES } from '../../constants';
 
 function* loginWorker(action) {
   try {
     localStorage.removeItem('authToken');
     const authToken = yield call(login, action.payload);
 
-    localStorage.setItem('authToken', authToken);
-    yield put(actionLoginSuccess({authToken, login: action.payload.login}));
-    const token = yield call(jwtDecode, authToken);
-    const {id} = token.sub;
+    if (authToken === null) {
+      yield put(actionSetSnackBar({type: ALERT_TYPES.ERROR, message: 'The login or password isn\'t correct! '}));
+    } else {
+      localStorage.setItem('authToken', authToken);
+      yield put(actionLoginSuccess({authToken, login: action.payload.login}));
+      const token = yield call(jwtDecode, authToken);
+      const {id} = token.sub;
 
-    const user = yield call(findUserById, id);
+      const user = yield call(findUserById, id);
 
-    yield put(actionFindUserByIdSuccess(user));
-    yield put(actionSetUser(user));
+      yield put(actionFindUserByIdSuccess(user));
+      yield put(actionSetUser(user));
 
-    yield call(forwardToPage, ROUTES.MAIN_PAGE);
-
-    if (user._id.length !== 0) {
-      yield put(actionSetSnackBar({type: ALERT_TYPES.SUCCESS, message: 'Success!'}));
+      yield call(forwardToPage, ROUTES.MAIN_PAGE);
+      if (user._id.length !== 0) {
+        yield put(actionSetSnackBar({type: ALERT_TYPES.SUCCESS, message: 'Success!'}));
+      }
     }
   } catch (e) {
     yield put(actionLoginFail(e.message));
@@ -72,7 +74,8 @@ function* setNickWorker(action) {
 }
 
 function* logOutWorker(action) {
-  yield put(actionSetUser());
+  yield put(actionSetUser(action.payload));
+  yield put(actionLoginSuccess({...action.payload}));
 }
 
 export function* authSaga() {

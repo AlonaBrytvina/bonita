@@ -21,9 +21,8 @@ import types, {
 import { getGqlForUpload } from '../../utils/getGqlForUpload';
 import { uploadTracks } from '../../api/upload';
 import { actionSetSnackBar } from '../types/snackBarTypes';
-import { ALERT_TYPES } from '../reducers/snackBarReducer';
 import { forwardToPage } from '../../utils/history';
-import { ROUTES } from '../../constants';
+import { ROUTES, ALERT_TYPES} from '../../constants';
 
 function* getAllPlaylists(action) {
   try {

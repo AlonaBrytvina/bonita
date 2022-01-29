@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const BACKEND_URL = 'http://player.asmer.fs.a-level.com.ua';
 
 export const ALERT_TYPES = {
@@ -23,3 +21,8 @@ export const ROUTES = {
 };
 
 export const DEFAULT_VOLUME = 1;
+
+export const LIMIT = {
+  TRACKS_ON_PAGE: 100,
+  PLAYLISTS_ON_PAGE: 20,
+};

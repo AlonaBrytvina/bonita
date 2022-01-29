@@ -37,6 +37,11 @@ export function playlistsReducer(state = initialState, action) {
         ...state,
         selectedPlaylist: action.payload,
       };
+    case types.FETCH_USER_PLAYLISTS:
+      return {
+        ...state,
+        isLoading: true,
+      };
     case types.FETCH_USER_PLAYLISTS_SUCCESS:
       return {
         ...state,

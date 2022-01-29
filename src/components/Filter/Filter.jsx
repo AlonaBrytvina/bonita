@@ -3,13 +3,10 @@ import {
 } from '@mui/material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ROUTES } from '../../constants';
-import { forwardToPage } from '../../utils/history';
 
 export const Filter = ({
-  onClickUpload, linkToUser, linkToAll,
-  selectedFilter, categoryName, count, onSelect,
+  onClickUpload, selectedFilter,
+  categoryName, count, onSelect,
 }) => (
   <Box
     sx={{

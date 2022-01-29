@@ -44,23 +44,28 @@ export const MainPage = () => {
         tracks={tracksState.trackList}
         isLoading={tracksState.isLoading}
       />
-      <Stack
-        spacing={2}
-        position="static"
-        bottom="0"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          mb: '3%',
-        }}
-      >
-        <Pagination
-          page={page}
-          count={Math.ceil(tracksState.totalCount / 100)}
-          onChange={handleChange}
-          color="primary"
-        />
-      </Stack>
+      {tracksState.totalCount !== 0
+        ? (
+          <Stack
+            spacing={2}
+            position="static"
+            bottom="0"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              mb: '3%',
+            }}
+          >
+            <Pagination
+              page={page}
+              count={Math.ceil(tracksState.totalCount / 100)}
+              onChange={handleChange}
+              color="primary"
+            />
+          </Stack>
+        ) : (
+          <></>
+        )}
     </Box>
   );
 };

@@ -1,7 +1,9 @@
-import React from 'react';
-
 export const saveState = state => {
-  localStorage.setItem('state', JSON.stringify(state));
+  if (!localStorage.getItem('authToken')) {
+    localStorage.removeItem('state');
+  } else {
+    localStorage.setItem('state', JSON.stringify(state));
+  }
 };
 
 export const stateToStorageSelector = state => ({
@@ -17,7 +19,6 @@ export const loadState = () => {
     }
 
     const state = JSON.parse(serializedState);
-
     saveState(state);
 
     return state;

@@ -4,6 +4,7 @@ import { Box } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { actionFetchOnePlaylist } from '../../store/types/playlistTypes';
 import { TrackList } from '../../components/TrackList/TrackList';
+import { SkeletonProduct } from '../../components/Skeleton/SkeletonProduct';
 
 export const SelectedPlaylistPage = () => {
   const playlists = useSelector(state => state.playlists);
@@ -16,9 +17,9 @@ export const SelectedPlaylistPage = () => {
 
   return (
     <Box>
-      <TrackList
-        tracks={playlists?.selectedPlaylist ?? []}
-      />
+      {playlists.isLoading
+        ? <SkeletonProduct/>
+        : <TrackList tracks={playlists?.selectedPlaylist ?? []} isLoading={playlists.isLoading}/>}
     </Box>
   );
 };

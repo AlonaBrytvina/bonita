@@ -13,7 +13,7 @@ import { playlistsReducer } from './reducers/playlistsReducer';
 import { playlistsSaga } from './sagas/playlistsSaga';
 import { uploadSaga } from './sagas/uploadSaga';
 import { uploadReducer } from './reducers/uploadReducer';
-import { loadState, saveState, stateToStorageSelector } from '../helpers';
+import { loadState, saveState, stateToStorageSelector } from '../utils/localStorage';
 import { snackBarReducer } from './reducers/snackBarReducer';
 
 const sagaMiddleware = createSagaMiddleware();

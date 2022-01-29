@@ -30,7 +30,7 @@ export const RegisterPage = () => {
   const [pswConfirmDirty, setConfirmPswDirty] = useState(false);
 
   const isPswValid = password?.length >= 4 && password?.length <= 20;
-  const isConfirmPswValid = password?.length >= 4 && password?.length <= 20;
+  const isConfirmPswValid = confirmPsw?.length >= 4 && confirmPsw?.length <= 20;
   const isLoginValid = login?.length >= 2 && login?.length <= 10;
 
   const dispatch = useDispatch();
@@ -52,7 +52,7 @@ export const RegisterPage = () => {
     if (password === confirmPsw) {
       dispatch(actionRegister({login, password}));
 
-      if (auth.login.length !== 0 && auth.authToken?.length !== 0) {
+      if (auth?.login?.length !== 0 && auth?.authToken?.length !== 0) {
         setOpenSnackBar(!openSnackBar);
       }
     }
@@ -146,7 +146,7 @@ export const RegisterPage = () => {
         {
           (password !== null && confirmPsw !== null)
             ? (password !== confirmPsw) || (!isPswValid && !isConfirmPswValid)
-              ? (<Box>The password confirmation does not match</Box>)
+              ? (<Typography variant="caption" sx={{mt: '10px'}}>The password confirmation does not match.</Typography>)
               : ''
             : ''
         }
@@ -156,10 +156,10 @@ export const RegisterPage = () => {
         color="primary"
         variant="contained"
         sx={{
-          margin: '20px 0',
+          margin: '10px 0 20px 0',
         }}
         onClick={signUp}
-        disabled={!(isLoginValid && isPswValid && isConfirmPswValid)}
+        disabled={!isLoginValid || !isPswValid || !isConfirmPswValid}
         fullWidth
       >
         Sign up

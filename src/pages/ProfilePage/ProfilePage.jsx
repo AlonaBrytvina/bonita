@@ -46,7 +46,7 @@ export const ProfilePage = () => {
 
   const logOut = () => {
     localStorage.removeItem('authToken');
-    dispatch(actionLogOut());
+    dispatch(actionLogOut(null));
     history.push('/login');
   };
 
@@ -56,12 +56,14 @@ export const ProfilePage = () => {
 
   const closeAndGetChangedNick = () => {
     setOpenNick(!openNick);
-    dispatch(actionSetNick(currentNick));
+    if (currentNick !== null && currentNick.trim().length !== 0) {
+      dispatch(actionSetNick(currentNick));
+    }
   };
   return (
     <Box
       sx={{
-        m: '10px 0',
+        m: '10px 0 100px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -139,7 +141,7 @@ export const ProfilePage = () => {
                     sx={{
                       mr: '5px',
                     }}
-                    value={currentNick}
+                    value={currentNick === null ? '' : currentNick}
                     onChange={onChangeNick}
                     endAdornment={(
                       <InputAdornment position="end">
@@ -162,7 +164,7 @@ export const ProfilePage = () => {
                     }}
                     item
                   >
-                    {user.nick === null || user?.nick?.length === 0
+                    {user.nick === null || user.nick?.trim().length === 0
                       ? (
                         <Box sx={{display: 'flex'}}>
                           <InputLabel>Enter nick</InputLabel>

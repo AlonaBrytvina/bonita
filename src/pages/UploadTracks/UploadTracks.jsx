@@ -3,7 +3,7 @@ import {
   Typography,
   Box, Paper, Grid, Avatar, Button,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { arrayMoveImmutable } from 'array-move';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
 import { Dropzone } from '../../components/Dropzone/Dropzone';
@@ -13,9 +13,11 @@ import { actionSetUploadTrack } from '../../store/types/uploadTypes';
 export const UploadTracks = () => {
   const dispatch = useDispatch();
   const [files, setFiles] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const addTrack = () => {
     dispatch(actionSetUploadTrack(files));
+    setIsDisabled(!isDisabled);
   };
 
   const onDrop = useCallback(acceptedFiles => {
@@ -61,20 +63,34 @@ export const UploadTracks = () => {
           {files.length === 0
             ? (
               <Typography>If you want to add tracks drag and drop an audio file</Typography>
-            ) : (
-              <Button
-                type="submit"
-                color="primary"
-                variant="contained"
-                sx={{
-                  margin: '20px 0',
-                }}
-                onClick={addTrack}
-                fullWidth
-              >
-                Upload tracks
-              </Button>
-            )}
+            ) : isDisabled
+              ? (
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  sx={{
+                    margin: '20px 0',
+                  }}
+                  onClick={addTrack}
+                  fullWidth
+                >
+                  Upload tracks
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  sx={{
+                    margin: '20px 0',
+                  }}
+                  disabled
+                  fullWidth
+                >
+                  Uploading
+                </Button>
+              )}
         </Box>
       </Paper>
     </Box>

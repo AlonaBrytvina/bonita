@@ -20,6 +20,11 @@ export function tracksReducer(state = initialState, action) {
         totalCount: action.payload.totalCount,
         isLoading: false,
       };
+    case types.FETCH_USER_TRACKS:
+      return {
+        ...state,
+        isLoading: true,
+      };
     case types.FETCH_USER_TRACKS_SUCCESS:
       return {
         ...state,

@@ -28,7 +28,7 @@ export const TrackList = ({tracks, isLoading}) => {
 
   return (
     <Box sx={{
-      minHeight: '70vh',
+      minHeight: '90vh',
     }}
     >
       {isLoading ? (

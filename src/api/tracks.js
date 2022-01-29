@@ -1,11 +1,15 @@
 import { getGql } from '../utils/getGql';
-import { BACKEND_URL } from '../constants';
+import { BACKEND_URL, LIMIT } from '../constants';
 
 export const getTracksCount = () => getGql(`
-      query getCount {
-          TrackCount(query:"[{}]")
+      query getCount($query: String) {
+          TrackCount(query:$query)
       } 
-  `);
+  `, {
+  query: JSON.stringify([{
+    originalFileName: {$exists: true, $ne: ''},
+  }]),
+});
 
 export const getTracksWithPage = (page = 1) => getGql(`
       query skipTracks($query: String) {
@@ -16,7 +20,7 @@ export const getTracksWithPage = (page = 1) => getGql(`
   `, {
   query: JSON.stringify([
     {originalFileName: {$exists: true, $ne: ''}},
-    {skip: [(page - 1) * 100]}]),
+    {skip: [(page - 1) * LIMIT.TRACKS_ON_PAGE]}]),
 })
   .then(data => data.map(track => ({
     ...track,
@@ -32,7 +36,7 @@ export const getUserTracks = ({userId, page = 1}) => getGql(`
   `, {
   query: JSON.stringify([
     {___owner: userId},
-    {skip: [(page - 1) * 100]}]),
+    {skip: [(page - 1) * LIMIT.TRACKS_ON_PAGE]}]),
 })
   .then(data => data.map(track => ({
     ...track,
@@ -43,4 +47,9 @@ export const getUserTracksCount = (userId) => getGql(`
       query getCount($query: String){
            TrackCount(query: $query)
       } 
-  `, {query: JSON.stringify([{___owner: userId}])});
+  `, {
+  query: JSON.stringify([{
+    ___owner: userId,
+    originalFileName: {$exists: true, $ne: ''},
+  }]),
+});

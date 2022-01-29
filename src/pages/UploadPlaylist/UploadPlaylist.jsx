@@ -3,7 +3,7 @@ import {
   Typography,
   Box, Paper, Grid, Button, Avatar, InputLabel, Input,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { arrayMoveImmutable } from 'array-move';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
 import { Dropzone } from '../../components/Dropzone/Dropzone';
@@ -13,9 +13,10 @@ import { actionCreatePlaylist } from '../../store/types/playlistTypes';
 export const UploadPlaylist = () => {
   const dispatch = useDispatch();
   const [files, setFiles] = useState([]);
-
   const [playlistName, setPlaylistName] = useState(null);
+
   const [isNameDirty, setIsNameDirty] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const onDrop = useCallback(acceptedFiles => {
     setFiles(oldFiles => ([
@@ -32,10 +33,11 @@ export const UploadPlaylist = () => {
     setPlaylistName(e.target.value);
   };
 
-  const isNameValid = playlistName?.length >= 5 && playlistName?.length < 20;
+  const isNameValid = playlistName?.length >= 5 && playlistName?.length < 20 && playlistName?.trim().length !== 0;
 
   const createPlaylist = () => {
     dispatch(actionCreatePlaylist({playlistName, files}));
+    setIsDisabled(!isDisabled);
   };
 
   return (
@@ -82,19 +84,35 @@ export const UploadPlaylist = () => {
             ? (
               <Typography>If you want to create a playlist drag and drop an audio file</Typography>
             ) : (
-              <Button
-                type="submit"
-                color="primary"
-                variant="contained"
-                sx={{
-                  margin: '20px 0',
-                }}
-                onClick={createPlaylist}
-                disabled={!(isNameValid)}
-                fullWidth
-              >
-                Create playlist
-              </Button>
+              isDisabled
+                ? (
+                  <Button
+                    type="submit"
+                    color="primary"
+                    variant="contained"
+                    sx={{
+                      margin: '20px 0',
+                    }}
+                    onClick={createPlaylist}
+                    disabled={!(isNameValid)}
+                    fullWidth
+                  >
+                    Create playlist
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    color="primary"
+                    variant="contained"
+                    sx={{
+                      margin: '20px 0',
+                    }}
+                    disabled
+                    fullWidth
+                  >
+                    Uploading
+                  </Button>
+                )
             )}
         </Box>
       </Paper>

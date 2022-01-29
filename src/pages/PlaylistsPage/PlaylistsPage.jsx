@@ -48,8 +48,7 @@ export const PlaylistsPage = () => {
         <SkeletonProductPlaylists />
       ) : (
         <Grid
-          spacing={3}
-          columns={10}
+          spacing={4}
           style={{
             margin: '0',
             width: '100%',
@@ -110,23 +109,28 @@ export const PlaylistsPage = () => {
           ))}
         </Grid>
       )}
-      <Stack
-        spacing={2}
-        position="static"
-        bottom="0"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          m: '3%',
-        }}
-      >
-        <Pagination
-          page={page}
-          count={Math.ceil(totalCount / 20)}
-          onChange={handleChange}
-          color="primary"
-        />
-      </Stack>
+      {totalCount !== 0
+        ? (
+          <Stack
+            spacing={2}
+            position="static"
+            bottom="0"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              m: '3%',
+            }}
+          >
+            <Pagination
+              page={page}
+              count={Math.ceil(totalCount / 20)}
+              onChange={handleChange}
+              color="primary"
+            />
+          </Stack>
+        ) : (
+          <></>
+        )}
     </Box>
   );
 };

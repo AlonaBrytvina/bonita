@@ -41,25 +41,35 @@ export const Header = () => {
             </Button>
           </Link>
         </Box>
-        <Link
-          to={user !== null ? ROUTES.PROFILE_PAGE : ROUTES.LOGIN_PAGE}
-        >
-          <IconButton
-            size="large"
-            color="inherit"
-          >
-            {user !== null && user !== undefined
-              ? (
-                <Avatar
-                  className="avatar"
-                  sx={{width: 30, height: 30}}
-                  src={buildUrl(user?.avatar?.url ?? '')}
-                />
-              ) : (
-                <LoginIcon/>
-              )}
-          </IconButton>
-        </Link>
+        {localStorage.getItem('authToken')
+          ? (
+            <Link
+              to={user !== null ? ROUTES.PROFILE_PAGE : ROUTES.LOGIN_PAGE}
+            >
+              <IconButton
+                size="large"
+                color="inherit"
+              >
+                {user !== null && user !== undefined
+                  ? (
+                    <Avatar
+                      className="avatar"
+                      sx={{width: 30, height: 30}}
+                      src={buildUrl(user?.avatar?.url ?? '')}
+                    />
+                  ) : (
+                    <LoginIcon/>
+                  )}
+              </IconButton>
+            </Link>
+          ) : (
+            <IconButton
+              size="large"
+              color="inherit"
+            >
+              <LoginIcon/>
+            </IconButton>
+          )}
       </Toolbar>
     </AppBar>
   );
